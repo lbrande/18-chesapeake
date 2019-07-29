@@ -1,42 +1,87 @@
 #![allow(dead_code)]
 
-use std::collections::*;
+use std::collections::HashSet;
+use std::hash::*;
 use std::u32;
 use toml::Value;
 
-#[derive(Default)]
+static INVALID_TOML: &str = "TOML is invalid";
+static TILES_MISSING: &str = "tiles is missing";
+static TILES_TYPEERROR: &str = "tiles is not of type Array";
+static COUNT_MISSING: &str = "count is missing";
+static COUNT_TYPEERROR: &str = "count is not of type Integer";
+static ID_MISSING: &str = "id is missing";
+static ID_TYPEERROR: &str = "id is not of type Integer";
+static RAILS_MISSING: &str = "rails is missing";
+static RAILS_TYPEERROR: &str = "rails is not of type Array";
+static COLOR_MISSING: &str = "color is missing";
+static COLOR_TYPEERROR: &str = "color is not of type String";
+static UPGRADES_MISSING: &str = "upgrades is missing";
+static UPGRADES_TYPEERROR: &str = "upgrades is not of type Array";
+static UPGRADE_TYPEERROR: &str = "upgrades is not of type Integer";
+
 pub struct TileSet {
-    tiles: HashMap<i32, (Tile, i32)>,
+    tiles: HashSet<(Tile, i32)>,
 }
 
 impl TileSet {
     pub fn from_string(string: &str) -> Self {
-        let mut tiles = HashMap::new();
-        for (key, value) in string.parse::<Value>().unwrap().as_table().unwrap() {
+        let toml = string.parse::<Value>().expect(INVALID_TOML);
+        let mut tiles = HashSet::new();
+        let tiles_toml = toml.get("tiles").expect(TILES_MISSING);
+        for value in tiles_toml.as_array().expect(TILES_TYPEERROR) {
             let tile = Tile::from_toml(value);
-            let count = value.get("count").unwrap().as_integer().unwrap();
-            tiles.insert(key.parse::<i32>().unwrap(), (tile, count as i32));
+            let count = value.get("count").expect(COUNT_MISSING);
+            let count = count.as_integer().expect(COUNT_TYPEERROR);
+            tiles.insert((tile, count as i32));
         }
         Self { tiles }
     }
 }
 
 pub struct Tile {
+    id: i32,
     rails: Vec<Rail>,
     color: ColorId,
+    upgrades: Vec<i32>,
 }
 
 impl Tile {
     pub fn from_toml(toml: &Value) -> Self {
+        let id = toml.get("id").expect(ID_MISSING);
+        let id = id.as_integer().expect(ID_TYPEERROR) as i32;
         let mut rails = Vec::new();
-        for value in toml.get("rails").unwrap().as_array().unwrap() {
+        let rails_toml = toml.get("rails").expect(RAILS_MISSING);
+        for value in rails_toml.as_array().expect(RAILS_TYPEERROR) {
             rails.push(Rail::from_toml(value));
         }
-        let color = toml.get("color").unwrap().as_str().unwrap();
+        let color = toml.get("color").expect(COLOR_MISSING);
+        let color = color.as_str().expect(COLOR_TYPEERROR);
+        let mut upgrades = Vec::new();
+        let upgrades_toml = toml.get("upgrades").expect(UPGRADES_MISSING);
+        for value in upgrades_toml.as_array().expect(UPGRADES_TYPEERROR) {
+            upgrades.push(value.as_integer().expect(UPGRADE_TYPEERROR) as i32);
+        }
         Self {
+            id,
             rails,
             color: ColorId::from_string(color),
+            upgrades,
         }
+    }
+}
+
+impl PartialEq for Tile {
+    fn eq(&self, rhs: &Self) -> bool {
+        self.id == rhs.id
+    }
+}
+
+impl Eq for Tile {}
+
+impl Hash for Tile {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state)
     }
 }
 
@@ -120,7 +165,7 @@ impl ColorId {
             "Brown" => ColorId::Brown,
             "Gray" => ColorId::Gray,
             "Red" => ColorId::Red,
-            _ => panic!("{} is not a valid ColorId", string),
+            _ => panic!("{} can not be parsed as ColorId", string),
         }
     }
 }
