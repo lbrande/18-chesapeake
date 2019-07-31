@@ -126,7 +126,7 @@ rails = [
     {edges = [0, 1, 3, 4], city = { value = 30, spots = 2 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [611]
 count = 5
 
 [[tiles]]
@@ -135,7 +135,7 @@ rails = [
     {edges = [0, 1, 2, 3], city = { value = 30, spots = 2 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [611]
 count = 6
 
 [[tiles]]
@@ -145,7 +145,7 @@ rails = [
     {edges = [1, 3]}
 ]
 color = "Green"
-upgrades = []
+upgrades = [43, 70]
 count = 1
 
 [[tiles]]
@@ -155,7 +155,7 @@ rails = [
     {edges = [1, 5]}
 ]
 color = "Green"
-upgrades = []
+upgrades = [45, 46]
 count = 1
 
 [[tiles]]
@@ -165,7 +165,7 @@ rails = [
     {edges = [1, 4]}
 ]
 color = "Green"
-upgrades = []
+upgrades = [44, 47]
 count = 1
 
 [[tiles]]
@@ -175,7 +175,7 @@ rails = [
     {edges = [0, 4]}
 ]
 color = "Green"
-upgrades = [41]
+upgrades = [41, 43, 45, 47]
 count = 3
 
 [[tiles]]
@@ -185,7 +185,7 @@ rails = [
     {edges = [0, 3]}
 ]
 color = "Green"
-upgrades = [42]
+upgrades = [42, 43, 46, 47]
 count = 3
 
 [[tiles]]
@@ -195,7 +195,7 @@ rails = [
     {edges = [0, 4]}
 ]
 color = "Green"
-upgrades = [40]
+upgrades = [40, 45, 46]
 count = 2
 
 [[tiles]]
@@ -205,7 +205,7 @@ rails = [
     {edges = [0, 5]}
 ]
 color = "Green"
-upgrades = [42]
+upgrades = [42, 44, 45]
 count = 1
 
 [[tiles]]
@@ -215,7 +215,7 @@ rails = [
     {edges = [0, 3]}
 ]
 color = "Green"
-upgrades = [41]
+upgrades = [41, 4, 46]
 count = 1
 
 [[tiles]]
@@ -225,7 +225,7 @@ rails = [
     {edges = [0, 5]}
 ]
 color = "Green"
-upgrades = [39]
+upgrades = [39, 43, 46, 70]
 count = 1
 
 [[tiles]]
@@ -235,7 +235,7 @@ rails = [
     {edges = [0, 2]}
 ]
 color = "Green"
-upgrades = [39]
+upgrades = [39, 43, 45, 70]
 count = 1
 
 [[tiles]]
@@ -244,7 +244,7 @@ rails = [
     {edges = [0, 1, 2, 4, 5], city = { value = 40, spots = 2 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [-6]
 count = 1
 
 [[tiles]]
@@ -254,7 +254,7 @@ rails = [
     {edges = [3, 5], city = { value = 40, spots = 1 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [-7]
 count = 1
 
 [[tiles]]
@@ -264,7 +264,7 @@ rails = [
     {edges = [2, 3], city = { value = 40, spots = 1 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [-7]
 count = 1
 
 [[tiles]]
@@ -274,7 +274,7 @@ rails = [
     {edges = [3, 5], city = { value = 40, spots = 1 }}
 ]
 color = "Green"
-upgrades = []
+upgrades = [-7]
 count = 1
 
 [[tiles]]
@@ -320,3 +320,129 @@ rails = [
 color = "Brown"
 upgrades = []
 count = 1
+
+[[tiles]]
+id = 43
+rails = [
+    {edges = [0, 2]},
+    {edges = [0, 3]},
+    {edges = [1, 2]},
+    {edges = [1, 3]},
+]
+color = "Brown"
+upgrades = []
+count = 2
+
+[[tiles]]
+id = 44
+rails = [
+    {edges = [0, 1]},
+    {edges = [0, 3]},
+    {edges = [1, 4]},
+    {edges = [3, 4]},
+]
+color = "Brown"
+upgrades = []
+count = 1
+
+[[tiles]]
+id = 45
+rails = [
+    {edges = [0, 3]},
+    {edges = [0, 5]},
+    {edges = [1, 3]},
+    {edges = [1, 5]},
+]
+color = "Brown"
+upgrades = []
+count = 1
+
+[[tiles]]
+id = 46
+rails = [
+    {edges = [0, 1]},
+    {edges = [0, 3]},
+    {edges = [1, 5]},
+    {edges = [3, 5]},
+]
+color = "Brown"
+upgrades = []
+count = 1
+
+[[tiles]]
+id = 47
+rails = [
+    {edges = [0, 3]},
+    {edges = [0, 4]},
+    {edges = [1, 3]},
+    {edges = [1, 4]},
+]
+color = "Brown"
+upgrades = []
+count = 2
+
+[[tiles]]
+id = 70
+rails = [
+    {edges = [0, 1]},
+    {edges = [0, 2]},
+    {edges = [1, 3]},
+    {edges = [2, 3]},
+]
+color = "Brown"
+upgrades = []
+count = 1
+
+[[tiles]]
+id = 611
+rails = [
+    {edges = [0, 1, 2, 3, 4], city = { value = 40, spots = 2 }}
+]
+color = "Brown"
+upgrades = [915]
+count = 5
+
+[[tiles]]
+id = -6
+rails = [
+    {edges = [0, 1, 2, 3, 4, 5], city = { value = 70, spots = 3 }}
+]
+color = "Brown"
+upgrades = [-8]
+count = 1
+
+[[tiles]]
+id = -7
+rails = [
+    {edges = [0, 1, 2, 4, 5], city = { value = 50, spots = 2 }}
+]
+color = "Brown"
+upgrades = [-9]
+count = 2
+
+[[tiles]]
+id = 915
+rails = [
+    {edges = [0, 1, 2, 4, 5], city = { value = 50, spots = 3 }}
+]
+color = "Gray"
+upgrades = []
+count = 5
+
+[[tiles]]
+id = -8
+rails = [
+    {edges = [0, 1, 2, 3, 4, 5], city = { value = 100, spots = 4 }}
+]
+color = "Gray"
+upgrades = []
+count = 1
+
+[[tiles]]
+id = -9
+rails = [
+    {edges = [0, 1, 2, 4, 5], city = { value = 70, spots = 3 }}
+]
+color = "Gray"
+upgrades = []
+count = 2
