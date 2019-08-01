@@ -17,7 +17,10 @@ impl Hex {
         let terrain = terrain.and_then(|t| Some(t.parse::<TerrainId>().unwrap()));
         let terrain = terrain.unwrap_or_default();
         if toml.get("rails").is_some() && toml.get("color").is_some() {
-            let tile = Tile::from_toml(toml);
+            let mut toml = toml.clone();
+            let id = Value::Integer(0);
+            toml.as_table_mut().unwrap().insert("id".to_string(), id);
+            let tile = Tile::from_toml(&toml);
             Self {
                 terrain,
                 tile: Some(tile),
