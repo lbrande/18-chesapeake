@@ -15,7 +15,7 @@ static VALUES_MISSING: &str = "values is missing";
 static VALUES_TYPEERROR: &str = "values is not of type Array";
 static VALUES_LENERROR: &str = "values is not of length four";
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Rail {
     edges: Vec<u32>,
     stop: Option<Stop>,
@@ -46,13 +46,13 @@ impl Rail {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 enum Stop {
     City(City),
     Location(Location),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct City {
     value: u32,
     stations: HashSet<PubComId>,
@@ -80,7 +80,7 @@ impl City {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 struct Location {
     values: (u32, u32, u32, u32),
     stations: HashSet<PubComId>,

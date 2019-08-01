@@ -1,7 +1,7 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum ColorId {
     Yellow,
     Green,
@@ -25,7 +25,7 @@ impl FromStr for ColorId {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum PubComId {
     BAndO,
     CAndA,
@@ -85,7 +85,7 @@ impl FromStr for PubComId {
     }
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum TerrainId {
     Plain,
     River,
@@ -99,6 +99,12 @@ impl TerrainId {
             TerrainId::River => 40,
             TerrainId::Mountain => 80,
         }
+    }
+}
+
+impl Default for TerrainId {
+    fn default() -> Self {
+        TerrainId::Plain
     }
 }
 

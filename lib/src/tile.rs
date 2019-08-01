@@ -13,7 +13,7 @@ static UPGRADES_MISSING: &str = "upgrades is missing";
 static UPGRADES_TYPEERROR: &str = "upgrades is not of type Array";
 static UPGRADE_TYPEERROR: &str = "upgrade is not of type Integer";
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Tile {
     id: i32,
     rails: Vec<Rail>,
