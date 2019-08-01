@@ -22,7 +22,7 @@ pub struct Tile {
 
 impl Tile {
     pub fn from_toml(toml: &Value) -> Self {
-        let id = toml.get("id").expect(ID_MISSING);
+        let id = toml.get("id").unwrap_or(&Value::Integer(0));
         let id = id.as_integer().expect(ID_TYPEERROR) as i32;
         let mut rails = Vec::new();
         let rails_toml = toml.get("rails").expect(RAILS_MISSING);

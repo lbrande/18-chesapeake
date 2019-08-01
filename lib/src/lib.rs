@@ -20,10 +20,10 @@ static HEIGHT_MISSING: &str = "height is missing";
 static HEIGHT_TYPEERROR: &str = "height is not of type Integer";
 static HEXES_MISSING: &str = "hexes is missing";
 static HEXES_TYPEERROR: &str = "hexes is not of type Array";
-static ROW_MISSING: &str = "row is missing";
-static ROW_TYPEERROR: &str = "row is not of type Integer";
-static COLUMN_MISSING: &str = "column is missing";
-static COLUMN_TYPEERROR: &str = "column is not of type Integer";
+static X_MISSING: &str = "x is missing";
+static X_TYPEERROR: &str = "x is not of type Integer";
+static Y_MISSING: &str = "y is missing";
+static Y_TYPEERROR: &str = "y is not of type Integer";
 
 #[derive(Debug)]
 pub struct TileSet {
@@ -65,11 +65,11 @@ impl FromStr for Map {
         let hexes_toml = toml.get("hexes").ok_or(HEXES_MISSING)?;
         for value in hexes_toml.as_array().ok_or(HEXES_TYPEERROR)? {
             let hex = Hex::from_toml(value);
-            let row = value.get("row").ok_or(ROW_MISSING)?;
-            let row = row.as_integer().ok_or(ROW_TYPEERROR)?;
-            let column = value.get("column").ok_or(COLUMN_MISSING)?;
-            let column = column.as_integer().ok_or(COLUMN_TYPEERROR)?;
-            hexes[row as usize][column as usize] = hex;
+            let x = value.get("x").ok_or(X_MISSING)?;
+            let x = x.as_integer().ok_or(X_TYPEERROR)?;
+            let y = value.get("y").ok_or(Y_MISSING)?;
+            let y = y.as_integer().ok_or(Y_TYPEERROR)?;
+            hexes[x as usize][y as usize] = hex;
         }
         Ok(Self { hexes })
     }
