@@ -1,13 +1,15 @@
 use crate::ids::TerrainId;
+use crate::rail::City;
 use crate::tile::Tile;
 use toml::Value;
 
 static TERRAIN_TYPEERROR: &str = "terrain is not of type String";
+static CITIES_TYPEERROR: &str = "cities is not of type Array";
 
 #[derive(Clone, Debug, Default)]
 pub struct Hex {
     terrain: TerrainId,
-    tile: Option<Tile>,
+    content: Option<Content>,
 }
 
 impl Hex {
@@ -23,13 +25,28 @@ impl Hex {
             let tile = Tile::from_toml(&toml);
             Self {
                 terrain,
-                tile: Some(tile),
+                content: Some(Content::Tile(tile)),
+            }
+        } else if let Some(value) = toml.get("cities") {
+            let mut cities = Vec::new();
+            for value in value.as_array().expect(CITIES_TYPEERROR) {
+                cities.push(City::from_toml(value));
+            }
+            Self {
+                terrain,
+                content: Some(Content::Cities(cities)),
             }
         } else {
             Self {
                 terrain,
-                tile: None,
+                content: None,
             }
         }
     }
+}
+
+#[derive(Clone, Debug)]
+enum Content {
+    Tile(Tile),
+    Cities(Vec<City>),
 }

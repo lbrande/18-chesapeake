@@ -55,7 +55,7 @@ enum Stop {
 }
 
 #[derive(Clone, Debug)]
-struct City {
+pub struct City {
     value: u32,
     stations: HashSet<PubComId>,
     spots: u32,
@@ -76,20 +76,20 @@ impl City {
         let spots = toml.get("spots").expect(SPOTS_MISSING);
         let spots = spots.as_integer().expect(SPOTS_TYPEERROR) as u32;
         if let Some(name) = toml.get("name") {
-        let name = name.as_str().expect(NAME_TYPEERROR);
-        Self {
-            value,
-            stations,
-            spots,
-            name: Some(name.to_string())
-        }
+            let name = name.as_str().expect(NAME_TYPEERROR);
+            Self {
+                value,
+                stations,
+                spots,
+                name: Some(name.to_string()),
+            }
         } else {
             Self {
-            value,
-            stations,
-            spots,
-            name: None
-        }
+                value,
+                stations,
+                spots,
+                name: None,
+            }
         }
     }
 }
