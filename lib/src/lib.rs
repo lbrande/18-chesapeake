@@ -1,8 +1,10 @@
+use crate::hex::Hex;
+use crate::tile::Tile;
 use std::collections::HashSet;
 use std::str::FromStr;
-use tile::Tile;
 use toml::Value;
 
+pub mod hex;
 pub mod ids;
 pub mod rail;
 pub mod tile;
@@ -33,4 +35,9 @@ impl FromStr for TileSet {
         }
         Ok(Self { tiles })
     }
+}
+
+#[derive(Debug)]
+pub struct Map {
+    hexes: Vec<Vec<Hex>>,
 }

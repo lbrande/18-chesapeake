@@ -1,8 +1,6 @@
-[package]
-name = "chesapeake"
-version = "0.1.0"
-authors = ["= <=>"]
-edition = "2018"
+[workspace]
 
-[dependencies]
-lib = { path = "lib" }
+members = [
+    "lib",
+    "server",
+]

@@ -84,3 +84,33 @@ impl FromStr for PubComId {
         }
     }
 }
+
+#[derive(Debug)]
+pub enum TerrainId {
+    Plain,
+    River,
+    Mountain,
+}
+
+impl TerrainId {
+    fn cost(&self) -> u32 {
+        match self {
+            TerrainId::Plain => 0,
+            TerrainId::River => 40,
+            TerrainId::Mountain => 80,
+        }
+    }
+}
+
+impl FromStr for TerrainId {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "Plain" => Ok(TerrainId::Plain),
+            "River" => Ok(TerrainId::River),
+            "Mountain" => Ok(TerrainId::Mountain),
+            _ => Err(format!("{} can not be parsed as TerrainId", s)),
+        }
+    }
+}
