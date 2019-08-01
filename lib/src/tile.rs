@@ -9,7 +9,6 @@ static RAILS_MISSING: &str = "rails is missing";
 static RAILS_TYPEERROR: &str = "rails is not of type Array";
 static COLOR_MISSING: &str = "color is missing";
 static COLOR_TYPEERROR: &str = "color is not of type String";
-static UPGRADES_MISSING: &str = "upgrades is missing";
 static UPGRADES_TYPEERROR: &str = "upgrades is not of type Array";
 static UPGRADE_TYPEERROR: &str = "upgrade is not of type Integer";
 
@@ -33,9 +32,10 @@ impl Tile {
         let color = toml.get("color").expect(COLOR_MISSING);
         let color = color.as_str().expect(COLOR_TYPEERROR);
         let mut upgrades = Vec::new();
-        let upgrades_toml = toml.get("upgrades").expect(UPGRADES_MISSING);
-        for value in upgrades_toml.as_array().expect(UPGRADES_TYPEERROR) {
-            upgrades.push(value.as_integer().expect(UPGRADE_TYPEERROR) as i32);
+        if let Some(value) = toml.get("upgrades") {
+            for value in value.as_array().expect(UPGRADES_TYPEERROR) {
+                upgrades.push(value.as_integer().expect(UPGRADE_TYPEERROR) as i32);
+            }
         }
         Self {
             id,

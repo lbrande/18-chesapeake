@@ -14,6 +14,8 @@ static SPOTS_TYPEERROR: &str = "spots is not of type Integer";
 static VALUES_MISSING: &str = "values is missing";
 static VALUES_TYPEERROR: &str = "values is not of type Array";
 static VALUES_LENERROR: &str = "values is not of length four";
+static NAME_MISSING: &str = "name is missing";
+static NAME_TYPEERROR: &str = "name is not of type String";
 
 #[derive(Clone, Debug)]
 pub struct Rail {
@@ -84,6 +86,7 @@ impl City {
 struct Location {
     values: (u32, u32, u32, u32),
     stations: HashSet<PubComId>,
+    name: String,
 }
 
 impl Location {
@@ -106,6 +109,12 @@ impl Location {
                 stations.insert(station.parse::<PubComId>().unwrap());
             }
         }
-        Self { values, stations }
+        let name = toml.get("name").expect(NAME_MISSING);
+        let name = name.as_str().expect(NAME_TYPEERROR);
+        Self {
+            values,
+            stations,
+            name: name.to_string(),
+        }
     }
 }
