@@ -1,5 +1,5 @@
 width = 12
-height = 14
+height = 7
 
 [[hexes]]
 rails = [
@@ -7,7 +7,7 @@ rails = [
 ]
 color = "Red"
 x = 0
-y = 2
+y = 1
 
 [[hexes]]
 rails = [
@@ -16,7 +16,7 @@ rails = [
 ]
 color = "Red"
 x = 0
-y = 6
+y = 3
 
 [[hexes]]
 rails = [
@@ -24,7 +24,7 @@ rails = [
 ]
 color = "Red"
 x = 0
-y = 12
+y = 6
 
 [[hexes]]
 rails = [
@@ -32,7 +32,7 @@ rails = [
 ]
 color = "Red"
 x = 1
-y = 1
+y = 0
 
 [[hexes]]
 cities = [
@@ -40,4 +40,60 @@ cities = [
     {value = 10, spots = 0, name = "Connellsville"}
 ]
 x = 1
+y = 1
+
+[[hexes]]
+x = 1
 y = 2
+
+[[hexes]]
+x = 1
+y = 3
+
+[[hexes]]
+x = 1
+y = 4
+
+[[hexes]]
+terrain = "Mountain"
+x = 1
+y = 5
+
+[[hexes]]
+rails = [
+    {edges = [4], location = {values = [40, 50, 60, 80], name = "West Virginia Coal"}}
+]
+color = "Red"
+x = 1
+y = 6
+
+[[hexes]]
+x = 2
+y = 1
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, name = "Green Spring"}
+]
+x = 2
+y = 2
+
+[[hexes]]
+x = 2
+y = 3
+
+[[hexes]]
+x = 2
+y = 4
+
+[[hexes]]
+x = 2
+y = 5
+
+[[hexes]]
+terrain = "Mountain"
+cities = [
+    {value = 20, stations = ["N&W"], spots = 1, name = "Lynchburg"}
+]
+x = 2
+y = 6
