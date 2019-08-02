@@ -28,22 +28,18 @@ impl Rail {
         let mut edges = Vec::new();
         let edges_toml = toml.get("edges").expect(EDGES_MISSING);
         for value in edges_toml.as_array().expect(EDGES_TYPEERROR) {
-            edges.push(value.as_integer().expect(EDGE_TYPEERROR) as u32);
+            let edge = value.as_integer().expect(EDGE_TYPEERROR);
+            edges.push(edge as u32);
         }
-        if let Some(value) = toml.get("city") {
-            let city = City::from_toml(value);
-            Self {
-                edges,
-                stop: Some(Stop::City(city)),
-            }
-        } else if let Some(value) = toml.get("location") {
-            let location = Location::from_toml(value);
-            Self {
-                edges,
-                stop: Some(Stop::Location(location)),
-            }
-        } else {
-            Self { edges, stop: None }
+        let city = toml
+            .get("city")
+            .and_then(|c| Some(Stop::City(City::from_toml(c))));
+        let location = toml
+            .get("location")
+            .and_then(|l| Some(Stop::Location(Location::from_toml(l))));
+        Self {
+            edges,
+            stop: city.or(location),
         }
     }
 }
@@ -64,8 +60,11 @@ pub struct City {
 
 impl City {
     pub fn from_toml(toml: &Value) -> Self {
-        let value = toml.get("value").expect(VALUE_MISSING);
-        let value = value.as_integer().expect(VALUE_TYPEERROR) as u32;
+        let value = toml
+            .get("value")
+            .expect(VALUE_MISSING)
+            .as_integer()
+            .expect(VALUE_TYPEERROR) as u32;
         let mut stations = HashSet::new();
         if let Some(stations_toml) = toml.get("stations") {
             for value in stations_toml.as_array().expect(STATIONS_TYPEERROR) {
@@ -73,23 +72,19 @@ impl City {
                 stations.insert(station.parse::<PubComId>().unwrap());
             }
         }
-        let spots = toml.get("spots").expect(SPOTS_MISSING);
-        let spots = spots.as_integer().expect(SPOTS_TYPEERROR) as u32;
-        if let Some(name) = toml.get("name") {
-            let name = name.as_str().expect(NAME_TYPEERROR);
-            Self {
-                value,
-                stations,
-                spots,
-                name: Some(name.to_string()),
-            }
-        } else {
-            Self {
-                value,
-                stations,
-                spots,
-                name: None,
-            }
+        let spots = toml
+            .get("spots")
+            .expect(SPOTS_MISSING)
+            .as_integer()
+            .expect(SPOTS_TYPEERROR) as u32;
+        let name = toml
+            .get("name")
+            .and_then(|n| Some(n.as_str().expect(NAME_TYPEERROR).to_string()));
+        Self {
+            value,
+            stations,
+            spots,
+            name,
         }
     }
 }
@@ -103,8 +98,11 @@ struct Location {
 
 impl Location {
     pub fn from_toml(toml: &Value) -> Self {
-        let values = toml.get("values").expect(VALUES_MISSING);
-        let values = values.as_array().expect(VALUES_TYPEERROR);
+        let values = toml
+            .get("values")
+            .expect(VALUES_MISSING)
+            .as_array()
+            .expect(VALUES_TYPEERROR);
         if values.len() != 4 {
             panic!(VALUES_LENERROR);
         }
@@ -121,8 +119,11 @@ impl Location {
                 stations.insert(station.parse::<PubComId>().unwrap());
             }
         }
-        let name = toml.get("name").expect(NAME_MISSING);
-        let name = name.as_str().expect(NAME_TYPEERROR);
+        let name = toml
+            .get("name")
+            .expect(NAME_MISSING)
+            .as_str()
+            .expect(NAME_TYPEERROR);
         Self {
             values,
             stations,

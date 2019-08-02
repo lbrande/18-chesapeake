@@ -86,6 +86,58 @@ impl FromStr for PubComId {
 }
 
 #[derive(Clone, Debug)]
+pub enum PrivComId {
+    DAndR,
+    CPRR,
+    BAndS,
+    CAndO,
+    BAndO,
+    CV,
+}
+
+impl PrivComId {
+    pub fn get_name(&self) -> &str {
+        match self {
+            PrivComId::DAndR => "Delaware and Raritan Canal",
+            PrivComId::CPRR => "Columbia-Philadelphia Railroad",
+            PrivComId::BAndS => "Baltimore and Susquehanna Railroad",
+            PrivComId::CAndO => "Chesapeake and Ohio Canal",
+            PrivComId::BAndO => "Baltimore and Ohio Railroad",
+            PrivComId::CV => "Cornelius Vanderbilt",
+        }
+    }
+}
+
+impl Display for PrivComId {
+    fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+        match self {
+            PrivComId::DAndR => write!(f, "D&R"),
+            PrivComId::CPRR => write!(f, "CPRR"),
+            PrivComId::BAndS => write!(f, "B&S"),
+            PrivComId::CAndO => write!(f, "C&O"),
+            PrivComId::BAndO => write!(f, "B&O"),
+            PrivComId::CV => write!(f, "CV"),
+        }
+    }
+}
+
+impl FromStr for PrivComId {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "D&R" => Ok(PrivComId::DAndR),
+            "CPRR" => Ok(PrivComId::CPRR),
+            "B&S" => Ok(PrivComId::BAndS),
+            "C&O" => Ok(PrivComId::CAndO),
+            "B&O" => Ok(PrivComId::BAndO),
+            "CV" => Ok(PrivComId::CV),
+            _ => Err(format!("{} can not be parsed as PrivComId", s)),
+        }
+    }
+}
+
+#[derive(Clone, Debug)]
 pub enum TerrainId {
     Plain,
     River,

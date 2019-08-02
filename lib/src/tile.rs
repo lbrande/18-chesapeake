@@ -22,19 +22,26 @@ pub struct Tile {
 
 impl Tile {
     pub fn from_toml(toml: &Value) -> Self {
-        let id = toml.get("id").expect(ID_MISSING);
-        let id = id.as_integer().expect(ID_TYPEERROR) as i32;
+        let id = toml
+            .get("id")
+            .expect(ID_MISSING)
+            .as_integer()
+            .expect(ID_TYPEERROR) as i32;
         let mut rails = Vec::new();
         let rails_toml = toml.get("rails").expect(RAILS_MISSING);
         for value in rails_toml.as_array().expect(RAILS_TYPEERROR) {
             rails.push(Rail::from_toml(value));
         }
-        let color = toml.get("color").expect(COLOR_MISSING);
-        let color = color.as_str().expect(COLOR_TYPEERROR);
+        let color = toml
+            .get("color")
+            .expect(COLOR_MISSING)
+            .as_str()
+            .expect(COLOR_TYPEERROR);
         let mut upgrades = Vec::new();
         if let Some(value) = toml.get("upgrades") {
             for value in value.as_array().expect(UPGRADES_TYPEERROR) {
-                upgrades.push(value.as_integer().expect(UPGRADE_TYPEERROR) as i32);
+                let upgrade = value.as_integer().expect(UPGRADE_TYPEERROR);
+                upgrades.push(upgrade as i32);
             }
         }
         Self {
@@ -43,6 +50,14 @@ impl Tile {
             color: color.parse::<ColorId>().unwrap(),
             upgrades,
         }
+    }
+
+    pub fn from_toml_no_id(toml: &Value) -> Self {
+        let mut toml = toml.clone();
+        toml.as_table_mut()
+            .unwrap()
+            .insert("id".to_string(), Value::Integer(0));
+        Tile::from_toml(&toml)
     }
 }
 
