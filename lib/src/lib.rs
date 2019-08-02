@@ -49,7 +49,7 @@ impl FromStr for TileSet {
 
 #[derive(Debug)]
 pub struct Map {
-    hexes: Vec<Vec<Hex>>,
+    hexes: Vec<Vec<Option<Hex>>>,
 }
 
 impl FromStr for Map {
@@ -61,7 +61,7 @@ impl FromStr for Map {
         let width = width.as_integer().ok_or(WIDTH_TYPEERROR)?;
         let height = toml.get("height").ok_or(HEIGHT_MISSING)?;
         let height = height.as_integer().ok_or(HEIGHT_TYPEERROR)?;
-        let mut hexes = vec![vec![Hex::default(); height as usize]; width as usize];
+        let mut hexes = vec![vec![None; height as usize]; width as usize];
         let hexes_toml = toml.get("hexes").ok_or(HEXES_MISSING)?;
         for value in hexes_toml.as_array().ok_or(HEXES_TYPEERROR)? {
             let hex = Hex::from_toml(value);
@@ -69,7 +69,7 @@ impl FromStr for Map {
             let x = x.as_integer().ok_or(X_TYPEERROR)?;
             let y = value.get("y").ok_or(Y_MISSING)?;
             let y = y.as_integer().ok_or(Y_TYPEERROR)?;
-            hexes[x as usize][y as usize] = hex;
+            hexes[x as usize][y as usize] = Some(hex);
         }
         Ok(Self { hexes })
     }

@@ -6,7 +6,7 @@ use toml::Value;
 static TERRAIN_TYPEERROR: &str = "terrain is not of type String";
 static CITIES_TYPEERROR: &str = "cities is not of type Array";
 
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct Hex {
     terrain: TerrainId,
     content: Option<Content>,

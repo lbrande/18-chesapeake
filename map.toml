@@ -36,8 +36,8 @@ y = 1
 
 [[hexes]]
 cities = [
-    {value = 0, spots = 0, name = "Charleroi"},
-    {value = 0, spots = 0, name = "Connellsville"}
+    {value = 10, spots = 0, name = "Charleroi"},
+    {value = 10, spots = 0, name = "Connellsville"}
 ]
 x = 1
 y = 2
