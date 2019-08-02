@@ -97,3 +97,81 @@ cities = [
 ]
 x = 2
 y = 6
+
+[[hexes]]
+terrain = "Mountain"
+private = "C&O"
+cities = [
+    {value = 20, spots = 1, name = "Berlin"}
+]
+x = 3
+y = 0
+
+[[hexes]]
+terrain = "Mountain"
+x = 3
+y = 1
+
+[[hexes]]
+terrain = "Mountain"
+x = 3
+y = 2
+
+[[hexes]]
+terrain = "Mountain"
+cities = [
+    {value = 20, spots = 1, name = "Leesburg"}
+]
+x = 3
+y = 3
+
+[[hexes]]
+terrain = "Mountain"
+x = 3
+y = 4
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, name = "Charlottesville"}
+]
+x = 3
+y = 5
+
+[[hexes]]
+rails = [
+    {edges = [1, 5]}
+]
+color = "Gray"
+x = 4
+y = 0
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, name = "Hagerstown"}
+]
+x = 4
+y = 1
+
+[[hexes]]
+terrain = "Mountain"
+x = 4
+y = 2
+
+[[hexes]]
+x = 4
+y = 3
+
+[[hexes]]
+x = 4
+y = 4
+
+[[hexes]]
+cities = [
+    {value = 10, spots = 0, name = "Fredericksburg"},
+]
+x = 4
+y = 5
+
+[[hexes]]
+x = 4
+y = 6
