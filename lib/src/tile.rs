@@ -1,6 +1,6 @@
 use crate::ids::ColorId;
 use crate::rail::Rail;
-use std::hash::*;
+use std::hash::{Hash, Hasher};
 use toml::Value;
 
 static ID_MISSING: &str = "id is missing";

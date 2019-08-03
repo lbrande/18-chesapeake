@@ -1,13 +1,17 @@
-use crate::hex::Hex;
-use crate::tile::Tile;
 use std::collections::HashSet;
 use std::str::FromStr;
 use toml::Value;
 
-pub mod hex;
-pub mod ids;
-pub mod rail;
-pub mod tile;
+mod hex;
+mod ids;
+mod rail;
+mod stops;
+mod tile;
+
+pub use crate::hex::Hex;
+pub use crate::ids::*;
+pub use crate::rail::Rail;
+pub use crate::tile::Tile;
 
 static INVALID_TOML: &str = "TOML is invalid";
 static TILES_MISSING: &str = "tiles is missing";

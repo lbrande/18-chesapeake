@@ -145,7 +145,7 @@ pub enum TerrainId {
 }
 
 impl TerrainId {
-    fn cost(&self) -> u32 {
+    pub fn cost(&self) -> u32 {
         match self {
             TerrainId::Plain => 0,
             TerrainId::River => 40,
