@@ -1,4 +1,4 @@
-use crate::stops::{City, Location};
+use crate::stops::{City, Location, Stop};
 use toml::Value;
 
 static EDGES_MISSING: &str = "edges is missing";
@@ -30,10 +30,4 @@ impl Rail {
             stop: city.or(location),
         }
     }
-}
-
-#[derive(Clone, Debug)]
-enum Stop {
-    City(City),
-    Location(Location),
 }

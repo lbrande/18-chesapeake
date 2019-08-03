@@ -15,6 +15,12 @@ static NAME_MISSING: &str = "name is missing";
 static NAME_TYPEERROR: &str = "name is not of type String";
 
 #[derive(Clone, Debug)]
+pub enum Stop {
+    City(City),
+    Location(Location),
+}
+
+#[derive(Clone, Debug)]
 pub struct City {
     value: u32,
     stations: HashSet<PubComId>,
