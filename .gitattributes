@@ -1,1 +1,1 @@
-*.toml linguist-data=false
+*.toml linguist-detectable=true
