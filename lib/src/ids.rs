@@ -88,7 +88,7 @@ impl FromStr for PubComId {
 #[derive(Clone, Debug)]
 pub enum PrivComId {
     DAndR,
-    CPRR,
+    CToP,
     BAndS,
     CAndO,
     BAndO,
@@ -99,7 +99,7 @@ impl PrivComId {
     pub fn get_name(&self) -> &str {
         match self {
             PrivComId::DAndR => "Delaware and Raritan Canal",
-            PrivComId::CPRR => "Columbia-Philadelphia Railroad",
+            PrivComId::CToP => "Columbia-Philadelphia Railroad",
             PrivComId::BAndS => "Baltimore and Susquehanna Railroad",
             PrivComId::CAndO => "Chesapeake and Ohio Canal",
             PrivComId::BAndO => "Baltimore and Ohio Railroad",
@@ -112,7 +112,7 @@ impl Display for PrivComId {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
             PrivComId::DAndR => write!(f, "D&R"),
-            PrivComId::CPRR => write!(f, "CPRR"),
+            PrivComId::CToP => write!(f, "C-P"),
             PrivComId::BAndS => write!(f, "B&S"),
             PrivComId::CAndO => write!(f, "C&O"),
             PrivComId::BAndO => write!(f, "B&O"),
@@ -127,7 +127,7 @@ impl FromStr for PrivComId {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "D&R" => Ok(PrivComId::DAndR),
-            "CPRR" => Ok(PrivComId::CPRR),
+            "C-P" => Ok(PrivComId::CToP),
             "B&S" => Ok(PrivComId::BAndS),
             "C&O" => Ok(PrivComId::CAndO),
             "B&O" => Ok(PrivComId::BAndO),

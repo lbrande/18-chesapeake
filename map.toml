@@ -175,3 +175,227 @@ y = 5
 [[hexes]]
 x = 4
 y = 6
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, stations = ["PRR"], name = "Harrisburg"}
+]
+x = 5
+y = 0
+
+[[hexes]]
+private = "B&S"
+x = 5
+y = 1
+
+[[hexes]]
+x = 5
+y = 2
+
+[[hexes]]
+cities = [
+    {value = 30, spots = 1, name= "Washington DC"}
+]
+x = 5
+y = 3
+
+[[hexes]]
+terrain = "River"
+x = 5
+y = 4
+
+[[hexes]]
+x = 5
+y = 5
+
+[[hexes]]
+rails = [
+    {edges = [3, 4]}
+]
+color = "Gray"
+x = 5
+y = 6
+
+[[hexes]]
+rails = [
+    {edges = [0, 1]},
+    {edges = [1, 5]}
+]
+color = "Gray"
+x = 6
+y = 0
+
+[[hexes]]
+terrain = "River"
+cities = [
+    {value = 10, spots = 0, name = "Columbia"}
+]
+x = 6
+y = 1
+
+[[hexes]]
+private = "B&S"
+x = 6
+y = 2
+
+[[hexes]]
+x = 6
+y = 3
+
+[[hexes]]
+terrain = "River"
+x = 6
+y = 4
+
+[[hexes]]
+terrain = "River"
+x = 6
+y = 5
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, stations = ["C&O"], name = "Richmond"}
+]
+x = 6
+y = 6
+
+[[hexes]]
+private = "C-P"
+x = 7
+y = 0
+
+[[hexes]]
+terrain = "River"
+cities = [
+    {value = 20, spots = 1, stations = ["SRR"], name = "Strasburg"}
+]
+x = 7
+y = 1
+
+[[hexes]]
+terrain = "River"
+rails = [
+    {edges = [1], city = { value = 30, spots = 1, stations = ["B&O"], name = "Baltimore"}},
+    {edges = [4], city = { value = 30, spots = 1, name = "Baltimore"}}
+]
+color = "Yellow"
+upgrades = [-3, -4, -5]
+x = 7
+y = 2
+
+[[hexes]]
+terrain = "River"
+x = 7
+y = 5
+
+[[hexes]]
+rails = [
+    {edges = [2], location = {values = [30, 40, 50, 60], name = "Norfolk"}}
+]
+color = "Red"
+x = 7
+y = 6
+
+[[hexes]]
+private = "C-P"
+x = 8
+y = 1
+
+[[hexes]]
+terrain = "River"
+cities = [
+    {value = 10, spots = 0, name = "Wilmington"}
+]
+x = 8
+y = 2
+
+[[hexes]]
+x = 8
+y = 3
+
+[[hexes]]
+rails = [
+    {edges = [3, 5], city = {value = 30, spots = 0, name = "Delmarva Peninsula"}}
+]
+color = "Gray"
+x = 8
+y = 4
+
+[[hexes]]
+cities = [
+    {value = 20, spots = 1, stations = ["LV"], name = "Allentown"}
+]
+x = 9
+y = 0
+
+[[hexes]]
+rails = [
+    {edges = [0], city = { value = 30, spots = 1, name = "Philadelphia"}},
+    {edges = [3], city = { value = 30, spots = 1, name = "Philadelphia"}}
+]
+color = "Yellow"
+upgrades = [-3, -4, -5]
+x = 9
+y = 1
+
+[[hexes]]
+terrain = "River"
+cities = [
+    {value = 20, spots = 1, stations = ["C&A"], name = "Camden"}
+]
+x = 9
+y = 2
+
+[[hexes]]
+x = 9
+y = 3
+
+[[hexes]]
+x = 9
+y = 4
+
+[[hexes]]
+rails = [
+    {edges = [0, 1], city = {value = 30, spots = 0, name = "Easton"}}
+]
+color = "Gray"
+x = 10
+y = 0
+
+[[hexes]]
+private = "D&R"
+cities = [
+    {value = 10, spots = 0, name = "Trenton"},
+    {value = 10, spots = 0, name = "Amboy"}
+]
+x = 10
+y = 1
+
+[[hexes]]
+cities = [
+    {value = 10, spots = 0, name = "Princeton"},
+    {value = 10, spots = 0, name = "Burlington"}
+]
+x = 10
+y = 2
+
+[[hexes]]
+rails = [
+    {edges = [2, 3]}
+]
+color = "Gray"
+x = 10
+y = 3
+
+[[hexes]]
+rails = [
+    {edges = [0], location = {values = [40, 60, 80, 100], name = "New York"}},
+    {edges = [1], location = {values = [40, 60, 80, 100], name = "New York"}}
+]
+color = "Red"
+x = 11
+y = 0
+
+[[hexes]]
+x = 11
+y = 1

@@ -69,6 +69,9 @@ impl FromStr for Map {
             let x = x.as_integer().ok_or(X_TYPEERROR)?;
             let y = value.get("y").ok_or(Y_MISSING)?;
             let y = y.as_integer().ok_or(Y_TYPEERROR)?;
+            if hexes[x as usize][y as usize].is_some() {
+                return Err(format!("hex at x={}, y={} is not empty", x, y));
+            }
             hexes[x as usize][y as usize] = Some(hex);
         }
         Ok(Self { hexes })
