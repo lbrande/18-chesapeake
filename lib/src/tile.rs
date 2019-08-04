@@ -12,6 +12,7 @@ static COLOR_TYPEERROR: &str = "color is not of type String";
 static UPGRADES_TYPEERROR: &str = "upgrades is not of type Array";
 static UPGRADE_TYPEERROR: &str = "upgrade is not of type Integer";
 
+///Represents a tile
 #[derive(Clone, Debug)]
 pub struct Tile {
     id: i32,
@@ -21,6 +22,7 @@ pub struct Tile {
 }
 
 impl Tile {
+    /// Parses a `Tile` from the TOML data `toml`
     pub fn from_toml(toml: &Value) -> Self {
         let id = toml
             .get("id")
