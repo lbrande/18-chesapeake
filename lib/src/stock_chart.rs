@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::ids::PubComId;
 use crate::INVALID_TOML;
 use toml::Value;
@@ -6,10 +7,11 @@ static VALUES_MISSING: &str = "values is missing";
 static VALUES_TYPEERROR: &str = "values is not of type Array of Arrays";
 static VALUE_TYPEERROR: &str = "value is not of type Integer";
 
-///Represents the stock chart for a game
+/// Represents the stock chart for a game
 #[derive(Clone, Debug)]
 pub struct StockChart {
-    values: Vec<Vec<(i32, Vec<PubComId>)>>,
+    values: Vec<Vec<(i32)>>,
+    tokens: HashMap<PubComId, (usize, usize, usize)>
 }
 
 impl StockChart {
@@ -22,10 +24,10 @@ impl StockChart {
             let mut row = Vec::new();
             for value in row_toml.as_array().expect(VALUES_TYPEERROR) {
                 let value = value.as_integer().expect(VALUE_TYPEERROR);
-                row.push((value as i32, Vec::new()));
+                row.push(value as i32);
             }
             values.push(row);
         }
-        Self { values }
+        Self { values, tokens: HashMap::new() }
     }
 }
