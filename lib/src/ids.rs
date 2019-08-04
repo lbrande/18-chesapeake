@@ -1,12 +1,18 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
+/// Represents the color of a tile
 #[derive(Clone, Debug)]
 pub enum ColorId {
+    /// Yellow tile color
     Yellow,
+    /// Green tile color
     Green,
+    /// Brown tile color
     Brown,
+    /// Gray tile color
     Gray,
+    /// Red tile color
     Red,
 }
 
@@ -25,19 +31,29 @@ impl FromStr for ColorId {
     }
 }
 
+/// Represents the name of a public company
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum PubComId {
+    /// Baltimore and Ohio Railroad
     BAndO,
+    /// Camden and Amboy Railroad
     CAndA,
+    /// Chesapeake and Ohio Railroad
     CAndO,
+    /// Lehigh Valley Railroad
     LV,
+    /// Norfolk and Western Railway
     NAndW,
+    /// Pennsylvania Railroad
     PRR,
+    /// Pittsburgh & Lake Erie Railroad
     PAndLE,
+    /// Strasburg Rail Road
     SRR,
 }
 
 impl PubComId {
+    /// Returns the name corresponding to this id
     pub fn get_name(&self) -> &str {
         match self {
             PubComId::BAndO => "Baltimore and Ohio Railroad",
@@ -85,17 +101,25 @@ impl FromStr for PubComId {
     }
 }
 
+/// Represents the name of a private company
 #[derive(Clone, Debug)]
 pub enum PrivComId {
+    /// Delaware and Raritan Canal
     DAndR,
+    /// Columbia-Philadelphia Railroad
     CToP,
+    /// Baltimore and Susquehanna Railroad
     BAndS,
+    /// Chesapeake and Ohio Canal
     CAndO,
+    /// Baltimore and Ohio Railroad
     BAndO,
+    /// Cornelius Vanderbilt
     CV,
 }
 
 impl PrivComId {
+    /// Returns the name corresponding to this id
     pub fn get_name(&self) -> &str {
         match self {
             PrivComId::DAndR => "Delaware and Raritan Canal",
@@ -137,14 +161,19 @@ impl FromStr for PrivComId {
     }
 }
 
+/// Represents the terrain of a hex
 #[derive(Clone, Debug)]
 pub enum TerrainId {
+    /// Plain hex terrain
     Plain,
+    /// River hex terrain
     River,
+    /// Mountain hex terrain
     Mountain,
 }
 
 impl TerrainId {
+    /// Returns the cost of laying track on this terrain
     pub fn cost(&self) -> u32 {
         match self {
             TerrainId::Plain => 0,

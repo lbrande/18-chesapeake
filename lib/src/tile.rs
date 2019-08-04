@@ -12,7 +12,7 @@ static COLOR_TYPEERROR: &str = "color is not of type String";
 static UPGRADES_TYPEERROR: &str = "upgrades is not of type Array";
 static UPGRADE_TYPEERROR: &str = "upgrade is not of type Integer";
 
-///Represents a tile
+/// Represents a tile
 #[derive(Clone, Debug)]
 pub struct Tile {
     id: i32,
@@ -22,8 +22,7 @@ pub struct Tile {
 }
 
 impl Tile {
-    /// Parses a `Tile` from the TOML data `toml`
-    pub fn from_toml(toml: &Value) -> Self {
+    pub(crate) fn from_toml(toml: &Value) -> Self {
         let id = toml
             .get("id")
             .expect(ID_MISSING)
@@ -54,7 +53,7 @@ impl Tile {
         }
     }
 
-    pub fn from_toml_no_id(toml: &Value) -> Self {
+    pub(crate) fn from_toml_no_id(toml: &Value) -> Self {
         let mut toml = toml.clone();
         toml.as_table_mut()
             .unwrap()

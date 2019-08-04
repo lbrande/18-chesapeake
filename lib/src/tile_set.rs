@@ -1,14 +1,14 @@
-use crate::INVALID_TOML;
-use toml::Value;
 use crate::tile::Tile;
+use crate::INVALID_TOML;
 use std::collections::HashSet;
+use toml::Value;
 
 static TILES_MISSING: &str = "tiles is missing";
 static TILES_TYPEERROR: &str = "tiles is not of type Array";
 static COUNT_MISSING: &str = "count is missing";
 static COUNT_TYPEERROR: &str = "count is not of type Integer";
 
-///Represents the tiles and their respective counts avaliable in a game
+/// Represents the tiles and their respective counts avaliable in a game
 #[derive(Clone, Debug)]
 pub struct TileSet {
     tiles: HashSet<(Tile, i32)>,

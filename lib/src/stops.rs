@@ -14,12 +14,16 @@ static VALUES_LENERROR: &str = "values is not of length four";
 static NAME_MISSING: &str = "name is missing";
 static NAME_TYPEERROR: &str = "name is not of type String";
 
+/// Represents a train stop
 #[derive(Clone, Debug)]
 pub enum Stop {
+    /// Stop with a city
     City(City),
+    /// Stop with an off-board location
     Location(Location),
 }
 
+/// Represents a city
 #[derive(Clone, Debug)]
 pub struct City {
     value: u32,
@@ -29,7 +33,7 @@ pub struct City {
 }
 
 impl City {
-    pub fn from_toml(toml: &Value) -> Self {
+    pub(crate) fn from_toml(toml: &Value) -> Self {
         let value = toml
             .get("value")
             .expect(VALUE_MISSING)
@@ -59,6 +63,7 @@ impl City {
     }
 }
 
+/// Represents an off-board location
 #[derive(Clone, Debug)]
 pub struct Location {
     values: (u32, u32, u32, u32),
@@ -67,7 +72,7 @@ pub struct Location {
 }
 
 impl Location {
-    pub fn from_toml(toml: &Value) -> Self {
+    pub(crate) fn from_toml(toml: &Value) -> Self {
         let values = toml
             .get("values")
             .expect(VALUES_MISSING)

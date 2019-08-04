@@ -9,6 +9,7 @@ static PRIVATE_TYPEERROR: &str = "private is not of type String";
 static CITIES_TYPEERROR: &str = "cities is not of type Array";
 
 #[derive(Clone, Debug)]
+/// Represents a hex
 pub struct Hex {
     terrain: TerrainId,
     content: Option<Content>,
@@ -16,7 +17,7 @@ pub struct Hex {
 }
 
 impl Hex {
-    pub fn from_toml(toml: &Value) -> Self {
+    pub(crate) fn from_toml(toml: &Value) -> Self {
         let terrain = toml
             .get("terrain")
             .and_then(|t| Some(t.as_str().expect(TERRAIN_TYPEERROR)))

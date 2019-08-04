@@ -1,5 +1,5 @@
-use crate::INVALID_TOML;
 use crate::hex::Hex;
+use crate::INVALID_TOML;
 use toml::Value;
 
 static WIDTH_MISSING: &str = "width is missing";
@@ -13,7 +13,7 @@ static X_TYPEERROR: &str = "x is not of type Integer";
 static Y_MISSING: &str = "y is missing";
 static Y_TYPEERROR: &str = "y is not of type Integer";
 
-//Represents the map that a game is played on
+/// Represents the map that a game is played on
 #[derive(Clone, Debug)]
 pub struct Map {
     hexes: Vec<Vec<Option<Hex>>>,
