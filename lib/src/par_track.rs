@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use crate::ids::PubComId;
 use crate::INVALID_TOML;
+use std::collections::HashMap;
 use toml::Value;
 
 static VALUES_MISSING: &str = "values is missing";
@@ -11,7 +11,7 @@ static VALUE_TYPEERROR: &str = "value is not of type Integer";
 #[derive(Clone, Debug)]
 pub struct ParTrack {
     values: Vec<u32>,
-    tokens: HashMap<PubComId, usize>
+    tokens: HashMap<PubComId, usize>,
 }
 
 impl ParTrack {
@@ -24,6 +24,9 @@ impl ParTrack {
             let value = value.as_integer().expect(VALUE_TYPEERROR);
             values.push(value as u32);
         }
-        Self { values, tokens: HashMap::new() }
+        Self {
+            values,
+            tokens: HashMap::new(),
+        }
     }
 }

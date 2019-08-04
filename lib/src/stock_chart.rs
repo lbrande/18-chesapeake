@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use crate::ids::PubComId;
 use crate::INVALID_TOML;
+use std::collections::HashMap;
 use toml::Value;
 
 static VALUES_MISSING: &str = "values is missing";
@@ -11,7 +11,7 @@ static VALUE_TYPEERROR: &str = "value is not of type Integer";
 #[derive(Clone, Debug)]
 pub struct StockChart {
     values: Vec<Vec<(i32)>>,
-    tokens: HashMap<PubComId, (usize, usize, usize)>
+    tokens: HashMap<PubComId, (usize, usize, usize)>,
 }
 
 impl StockChart {
@@ -28,6 +28,9 @@ impl StockChart {
             }
             values.push(row);
         }
-        Self { values, tokens: HashMap::new() }
+        Self {
+            values,
+            tokens: HashMap::new(),
+        }
     }
 }
