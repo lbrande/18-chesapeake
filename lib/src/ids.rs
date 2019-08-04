@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::str::FromStr;
 
 /// Represents the color of a tile
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum ColorId {
     /// Yellow tile color
     Yellow,
@@ -32,7 +32,7 @@ impl FromStr for ColorId {
 }
 
 /// Represents the name of a public company
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PubComId {
     /// Baltimore and Ohio Railroad
     BAndO,
@@ -102,7 +102,7 @@ impl FromStr for PubComId {
 }
 
 /// Represents the name of a private company
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum PrivComId {
     /// Delaware and Raritan Canal
     DAndR,
@@ -162,7 +162,7 @@ impl FromStr for PrivComId {
 }
 
 /// Represents the terrain of a hex
-#[derive(Clone, Debug)]
+#[derive(Clone, Copy, Debug)]
 pub enum TerrainId {
     /// Plain hex terrain
     Plain,
@@ -174,7 +174,7 @@ pub enum TerrainId {
 
 impl TerrainId {
     /// Returns the cost of laying track on this terrain
-    pub fn cost(&self) -> u32 {
+    pub fn cost(self) -> u32 {
         match self {
             TerrainId::Plain => 0,
             TerrainId::River => 40,
