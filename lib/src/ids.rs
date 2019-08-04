@@ -1,4 +1,5 @@
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::slice::Iter;
 use std::str::FromStr;
 
 /// Represents the color of a tile
@@ -65,6 +66,20 @@ impl PubComId {
             PubComId::PAndLE => "Pittsburgh & Lake Erie Railroad",
             PubComId::SRR => "Strasburg Rail Road",
         }
+    }
+
+    pub(crate) fn values() -> Iter<'static, Self> {
+        [
+            PubComId::BAndO,
+            PubComId::CAndA,
+            PubComId::CAndO,
+            PubComId::LV,
+            PubComId::NAndW,
+            PubComId::PRR,
+            PubComId::PAndLE,
+            PubComId::SRR,
+        ]
+        .iter()
     }
 }
 
