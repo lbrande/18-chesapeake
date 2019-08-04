@@ -22,8 +22,11 @@ impl TileSet {
         let tiles_toml = toml.get("tiles").expect(TILES_MISSING);
         for value in tiles_toml.as_array().expect(TILES_TYPEERROR) {
             let tile = Tile::from_toml(value);
-            let count = value.get("count").expect(COUNT_MISSING);
-            let count = count.as_integer().expect(COUNT_TYPEERROR);
+            let count = value
+                .get("count")
+                .expect(COUNT_MISSING)
+                .as_integer()
+                .expect(COUNT_TYPEERROR);
             tiles.insert((tile, count as i32));
         }
         Self { tiles }

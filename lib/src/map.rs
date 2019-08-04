@@ -23,18 +23,30 @@ impl Map {
     /// Parses a `Map` from the TOML data in `s`
     pub fn from_toml(s: &str) -> Self {
         let toml = s.parse::<Value>().expect(INVALID_TOML);
-        let width = toml.get("width").expect(WIDTH_MISSING);
-        let width = width.as_integer().expect(WIDTH_TYPEERROR);
-        let height = toml.get("height").expect(HEIGHT_MISSING);
-        let height = height.as_integer().expect(HEIGHT_TYPEERROR);
+        let width = toml
+            .get("width")
+            .expect(WIDTH_MISSING)
+            .as_integer()
+            .expect(WIDTH_TYPEERROR);
+        let height = toml
+            .get("height")
+            .expect(HEIGHT_MISSING)
+            .as_integer()
+            .expect(HEIGHT_TYPEERROR);
         let mut hexes = vec![vec![None; height as usize]; width as usize];
         let hexes_toml = toml.get("hexes").expect(HEXES_MISSING);
         for value in hexes_toml.as_array().expect(HEXES_TYPEERROR) {
             let hex = Hex::from_toml(value);
-            let x = value.get("x").expect(X_MISSING);
-            let x = x.as_integer().expect(X_TYPEERROR);
-            let y = value.get("y").expect(Y_MISSING);
-            let y = y.as_integer().expect(Y_TYPEERROR);
+            let x = value
+                .get("x")
+                .expect(X_MISSING)
+                .as_integer()
+                .expect(X_TYPEERROR);
+            let y = value
+                .get("y")
+                .expect(Y_MISSING)
+                .as_integer()
+                .expect(Y_TYPEERROR);
             if hexes[x as usize][y as usize].is_some() {
                 panic!("hex at x={}, y={} is not empty", x, y);
             }

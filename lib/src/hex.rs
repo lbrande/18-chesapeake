@@ -1,5 +1,4 @@
-use crate::ids::PrivComId;
-use crate::ids::TerrainId;
+use crate::ids::{PrivComId, TerrainId};
 use crate::stops::City;
 use crate::tile::Tile;
 use toml::Value;
