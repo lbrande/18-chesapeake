@@ -4,8 +4,7 @@ use toml::Value;
 
 static VALUE_MISSING: &str = "value is missing";
 static VALUE_TYPEERROR: &str = "value is not of type Integer";
-static STATIONS_TYPEERROR: &str = "stations is not of type Array";
-static STATION_TYPEERROR: &str = "station is not of type String";
+static START_TYPEERROR: &str = "start is not of type String";
 static SPOTS_MISSING: &str = "spots is missing";
 static SPOTS_TYPEERROR: &str = "spots is not of type Integer";
 static VALUES_MISSING: &str = "values is missing";
@@ -30,6 +29,7 @@ pub struct City {
     stations: HashSet<PubComId>,
     spots: u32,
     name: Option<String>,
+    start: Option<PubComId>,
 }
 
 impl City {
@@ -39,13 +39,6 @@ impl City {
             .expect(VALUE_MISSING)
             .as_integer()
             .expect(VALUE_TYPEERROR) as u32;
-        let mut stations = HashSet::new();
-        if let Some(stations_toml) = toml.get("stations") {
-            for value in stations_toml.as_array().expect(STATIONS_TYPEERROR) {
-                let station = value.as_str().expect(STATION_TYPEERROR);
-                stations.insert(station.parse::<PubComId>().unwrap());
-            }
-        }
         let spots = toml
             .get("spots")
             .expect(SPOTS_MISSING)
@@ -54,11 +47,16 @@ impl City {
         let name = toml
             .get("name")
             .and_then(|n| Some(n.as_str().expect(NAME_TYPEERROR).to_string()));
+        let start = toml
+            .get("start")
+            .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
+            .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
         Self {
             value,
-            stations,
+            stations: HashSet::new(),
             spots,
             name,
+            start,
         }
     }
 }
@@ -69,6 +67,7 @@ pub struct Location {
     values: (u32, u32, u32, u32),
     stations: HashSet<PubComId>,
     name: String,
+    start: Option<PubComId>,
 }
 
 impl Location {
@@ -87,22 +86,20 @@ impl Location {
             values[2].as_integer().expect(VALUE_TYPEERROR) as u32,
             values[3].as_integer().expect(VALUE_TYPEERROR) as u32,
         );
-        let mut stations = HashSet::new();
-        if let Some(stations_toml) = toml.get("stations") {
-            for value in stations_toml.as_array().expect(STATIONS_TYPEERROR) {
-                let station = value.as_str().expect(STATION_TYPEERROR);
-                stations.insert(station.parse::<PubComId>().unwrap());
-            }
-        }
         let name = toml
             .get("name")
             .expect(NAME_MISSING)
             .as_str()
             .expect(NAME_TYPEERROR);
+        let start = toml
+            .get("start")
+            .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
+            .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
         Self {
             values,
-            stations,
+            stations: HashSet::new(),
             name: name.to_string(),
+            start,
         }
     }
 }
