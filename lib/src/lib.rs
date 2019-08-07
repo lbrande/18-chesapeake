@@ -9,9 +9,7 @@
 pub mod economy;
 pub mod geography;
 mod ids;
-mod player;
 
 pub use ids::*;
-pub use player::Player;
 
 pub(crate) static INVALID_TOML: &str = "TOML is invalid";

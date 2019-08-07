@@ -240,3 +240,20 @@ impl FromStr for TerrainId {
         }
     }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+/// Represents a train
+pub enum TrainId {
+    /// 2 range train
+    Range2,
+    /// 3 range train
+    Range3,
+    /// 4 range train
+    Range4,
+    /// 5 range train
+    Range5,
+    /// 6 range train
+    Range6,
+    /// Diesel train
+    DIESEL,
+}
