@@ -1,8 +1,6 @@
-use lib::Map;
-use lib::ParTrack;
-use lib::StockChart;
-use lib::TileSet;
-use std::fs::*;
+use lib::economy::{ParTrack, StockChart};
+use lib::geography::{Map, TileSet};
+use std::fs::read_to_string;
 
 fn main() {
     let tile_set = read_to_string("conf/tile_set.toml").unwrap();
