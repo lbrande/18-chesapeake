@@ -10,7 +10,7 @@ pub struct Shares {
 }
 
 impl Shares {
-    /// Returns a `Shares` for the IPO
+    /// Returns the `Shares` for the IPO
     pub fn ipo_shares() -> Self {
         let mut shares = HashMap::new();
         let mut president_shares = HashSet::new();
@@ -21,11 +21,11 @@ impl Shares {
         Self {
             shares,
             president_shares,
-            kind: Kind::Ipo
+            kind: Kind::Ipo,
         }
     }
 
-    /// Returns a `Shares` for the bank pool
+    /// Returns the `Shares` for the bank pool
     pub fn bank_pool_shares() -> Self {
         Self::with_kind(Kind::BankPool)
     }
@@ -43,10 +43,9 @@ impl Shares {
         Self {
             shares,
             president_shares: HashSet::new(),
-            kind
+            kind,
         }
     }
-
 }
 
 #[derive(Clone, Debug)]

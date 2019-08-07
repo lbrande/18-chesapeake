@@ -54,7 +54,7 @@ pub enum PubComId {
 }
 
 impl PubComId {
-    /// Returns the name corresponding to this id
+    /// Returns the name of this public company
     pub fn get_name(&self) -> &str {
         match self {
             PubComId::BAndO => "Baltimore and Ohio Railroad",
@@ -117,7 +117,7 @@ impl FromStr for PubComId {
 }
 
 /// Identifies a private company
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PrivComId {
     /// Delaware and Raritan Canal
     DAndR,
