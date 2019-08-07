@@ -9,6 +9,6 @@ pub mod economy;
 pub mod geography;
 mod ids;
 
-pub use crate::ids::*;
+pub use ids::*;
 
 pub(crate) static INVALID_TOML: &str = "TOML is invalid";
