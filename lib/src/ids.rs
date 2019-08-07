@@ -32,7 +32,7 @@ impl FromStr for ColorId {
     }
 }
 
-/// Represents the name of a public company
+/// Identifies a public company
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PubComId {
     /// Baltimore and Ohio Railroad
@@ -116,7 +116,7 @@ impl FromStr for PubComId {
     }
 }
 
-/// Represents the name of a private company
+/// Identifies a private company
 #[derive(Clone, Copy, Debug)]
 pub enum PrivComId {
     /// Delaware and Raritan Canal
@@ -134,7 +134,7 @@ pub enum PrivComId {
 }
 
 impl PrivComId {
-    /// Returns the name corresponding to this id
+    /// Returns the name of this private company
     pub fn get_name(&self) -> &str {
         match self {
             PrivComId::DAndR => "Delaware and Raritan Canal",
@@ -143,6 +143,30 @@ impl PrivComId {
             PrivComId::CAndO => "Chesapeake and Ohio Canal",
             PrivComId::BAndO => "Baltimore and Ohio Railroad",
             PrivComId::CV => "Cornelius Vanderbilt",
+        }
+    }
+
+    /// Returns the cost of this private company
+    pub fn get_cost(self) -> u32 {
+        match self {
+            PrivComId::DAndR => 20,
+            PrivComId::CToP => 40,
+            PrivComId::BAndS => 50,
+            PrivComId::CAndO => 80,
+            PrivComId::BAndO => 100,
+            PrivComId::CV => 200,
+        }
+    }
+
+    /// Returns the revenue of this private company
+    pub fn get_revenue(self) -> u32 {
+        match self {
+            PrivComId::DAndR => 5,
+            PrivComId::CToP => 10,
+            PrivComId::BAndS => 10,
+            PrivComId::CAndO => 15,
+            PrivComId::BAndO => 0,
+            PrivComId::CV => 30,
         }
     }
 }
