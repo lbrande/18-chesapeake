@@ -3,7 +3,7 @@ use std::slice::Iter;
 use std::str::FromStr;
 
 /// Represents the color of a tile
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum ColorId {
     /// Yellow tile color
     Yellow,
@@ -54,7 +54,7 @@ pub enum PubComId {
 }
 
 impl PubComId {
-    /// Returns the name of this public company
+    /// Returns the name of this `PubComId`
     pub fn get_name(&self) -> &str {
         match self {
             PubComId::BAndO => "Baltimore and Ohio Railroad",
@@ -68,7 +68,8 @@ impl PubComId {
         }
     }
 
-    pub(crate) fn values() -> Iter<'static, Self> {
+    /// Returns an iterator over the possible values of `PubComId`
+    pub fn values() -> Iter<'static, Self> {
         [
             PubComId::BAndO,
             PubComId::CAndA,
@@ -134,7 +135,7 @@ pub enum PrivComId {
 }
 
 impl PrivComId {
-    /// Returns the name of this private company
+    /// Returns the name of this `PrivComId`
     pub fn get_name(&self) -> &str {
         match self {
             PrivComId::DAndR => "Delaware and Raritan Canal",
@@ -146,7 +147,7 @@ impl PrivComId {
         }
     }
 
-    /// Returns the cost of this private company
+    /// Returns the cost of this `PrivComId`
     pub fn get_cost(self) -> u32 {
         match self {
             PrivComId::DAndR => 20,
@@ -158,7 +159,7 @@ impl PrivComId {
         }
     }
 
-    /// Returns the revenue of this private company
+    /// Returns the revenue of this `PrivComId`
     pub fn get_revenue(self) -> u32 {
         match self {
             PrivComId::DAndR => 5,
@@ -168,6 +169,19 @@ impl PrivComId {
             PrivComId::BAndO => 0,
             PrivComId::CV => 30,
         }
+    }
+
+    /// Returns an iterator over the possible values of `PrivComId`
+    pub fn values() -> Iter<'static, Self> {
+        [
+            PrivComId::DAndR,
+            PrivComId::CToP,
+            PrivComId::BAndS,
+            PrivComId::CAndO,
+            PrivComId::BAndO,
+            PrivComId::CV,
+        ]
+        .iter()
     }
 }
 
@@ -201,7 +215,7 @@ impl FromStr for PrivComId {
 }
 
 /// Represents the terrain of a hex
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum TerrainId {
     /// Plain hex terrain
     Plain,
@@ -212,7 +226,7 @@ pub enum TerrainId {
 }
 
 impl TerrainId {
-    /// Returns the cost of laying track on this terrain
+    /// Returns the cost of laying `Tile`s on this `TerrainId`
     pub fn cost(self) -> u32 {
         match self {
             TerrainId::Plain => 0,
@@ -241,7 +255,7 @@ impl FromStr for TerrainId {
     }
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 /// Represents a train
 pub enum TrainId {
     /// 2 range train
@@ -255,5 +269,21 @@ pub enum TrainId {
     /// 6 range train
     Range6,
     /// Diesel train
-    DIESEL,
+    Diesel,
+}
+
+impl FromStr for TrainId {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "2" => Ok(TrainId::Range2),
+            "3" => Ok(TrainId::Range3),
+            "4" => Ok(TrainId::Range4),
+            "5" => Ok(TrainId::Range5),
+            "6" => Ok(TrainId::Range6),
+            "D" => Ok(TrainId::Diesel),
+            _ => Err(format!("{} can not be parsed as TrainId", s)),
+        }
+    }
 }

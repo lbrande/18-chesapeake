@@ -11,8 +11,7 @@ pub struct Player {
 }
 
 impl Player {
-    /// Returns a `Player` with `capital` initial capital
-    pub fn new(capital: u32) -> Self {
+    pub(crate) fn new(capital: u32) -> Self {
         Self {
             capital,
             shares: Shares::player_shares(),

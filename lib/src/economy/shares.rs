@@ -10,8 +10,7 @@ pub struct Shares {
 }
 
 impl Shares {
-    /// Returns the `Shares` for the IPO
-    pub fn ipo_shares() -> Self {
+    pub(crate) fn ipo_shares() -> Self {
         let mut shares = HashMap::new();
         let mut president_shares = HashSet::new();
         for &id in PubComId::values() {
@@ -25,13 +24,11 @@ impl Shares {
         }
     }
 
-    /// Returns the `Shares` for the bank pool
-    pub fn bank_pool_shares() -> Self {
+    pub(crate) fn bank_pool_shares() -> Self {
         Self::with_kind(Kind::BankPool)
     }
 
-    /// Returns a `Shares` for a player
-    pub fn player_shares() -> Self {
+    pub(crate) fn player_shares() -> Self {
         Self::with_kind(Kind::Player)
     }
 

@@ -8,3 +8,13 @@ pub struct PublicCompany {
     capital: u32,
     trains: HashSet<TrainId>,
 }
+
+impl PublicCompany {
+    pub(crate) fn new(id: PubComId, capital: u32) -> Self {
+        Self {
+            id,
+            capital,
+            trains: HashSet::new(),
+        }
+    }
+}

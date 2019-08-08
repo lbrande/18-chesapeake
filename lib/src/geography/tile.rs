@@ -1,5 +1,6 @@
 use super::Rail;
 use crate::ColorId;
+use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 use toml::Value;
 
@@ -63,8 +64,8 @@ impl Tile {
 }
 
 impl PartialEq for Tile {
-    fn eq(&self, rhs: &Self) -> bool {
-        self.id == rhs.id
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
     }
 }
 
@@ -73,5 +74,21 @@ impl Eq for Tile {}
 impl Hash for Tile {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.id.hash(state)
+    }
+}
+
+impl PartialOrd for Tile {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for Tile {
+    fn cmp(&self, other: &Self) -> Ordering {
+        match self.color.cmp(&other.color) {
+            Ordering::Less => Ordering::Less,
+            Ordering::Equal => self.id.cmp(&other.id),
+            Ordering::Greater => Ordering::Greater,
+        }
     }
 }
