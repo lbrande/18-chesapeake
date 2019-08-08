@@ -1,11 +1,7 @@
 use super::Rail;
 use crate::ColorId;
-use std::cmp::Ordering;
-use std::hash::{Hash, Hasher};
 use toml::Value;
 
-static ID_MISSING: &str = "id is missing";
-static ID_TYPEERROR: &str = "id is not of type Integer";
 static RAILS_MISSING: &str = "rails is missing";
 static RAILS_TYPEERROR: &str = "rails is not of type Array";
 static COLOR_MISSING: &str = "color is missing";
@@ -16,7 +12,6 @@ static UPGRADE_TYPEERROR: &str = "upgrade is not of type Integer";
 /// Represents a tile
 #[derive(Clone, Debug)]
 pub struct Tile {
-    id: i32,
     rails: Vec<Rail>,
     color: ColorId,
     upgrades: Vec<i32>,
@@ -24,11 +19,6 @@ pub struct Tile {
 
 impl Tile {
     pub(crate) fn from_toml(toml: &Value) -> Self {
-        let id = toml
-            .get("id")
-            .expect(ID_MISSING)
-            .as_integer()
-            .expect(ID_TYPEERROR) as i32;
         let mut rails = Vec::new();
         let rails_toml = toml.get("rails").expect(RAILS_MISSING);
         for value in rails_toml.as_array().expect(RAILS_TYPEERROR) {
@@ -47,48 +37,9 @@ impl Tile {
             }
         }
         Self {
-            id,
             rails,
             color: color.parse::<ColorId>().unwrap(),
             upgrades,
-        }
-    }
-
-    pub(crate) fn from_toml_no_id(toml: &Value) -> Self {
-        let mut toml = toml.clone();
-        toml.as_table_mut()
-            .unwrap()
-            .insert("id".to_string(), Value::Integer(0));
-        Tile::from_toml(&toml)
-    }
-}
-
-impl PartialEq for Tile {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id
-    }
-}
-
-impl Eq for Tile {}
-
-impl Hash for Tile {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        self.id.hash(state)
-    }
-}
-
-impl PartialOrd for Tile {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for Tile {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.color.cmp(&other.color) {
-            Ordering::Less => Ordering::Less,
-            Ordering::Equal => self.id.cmp(&other.id),
-            Ordering::Greater => Ordering::Greater,
         }
     }
 }

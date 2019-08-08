@@ -15,8 +15,7 @@ pub struct ParTrack {
 }
 
 impl ParTrack {
-    /// Parses a `ParTrack` from the TOML data in `s`
-    pub fn from_toml(s: &str) -> Self {
+    pub(crate) fn from_toml(s: &str) -> Self {
         let toml = s.parse::<Value>().expect(INVALID_TOML);
         let mut values = Vec::new();
         let values_toml = toml.get("values").expect(VALUES_MISSING);

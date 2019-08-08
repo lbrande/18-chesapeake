@@ -29,7 +29,7 @@ impl Hex {
         let tile = toml
             .get("rails")
             .and(toml.get("color"))
-            .and_then(|_| Some(Content::Tile(Tile::from_toml_no_id(&toml))));
+            .and_then(|_| Some(Content::Tile(Tile::from_toml(&toml))));
         let cities = toml.get("cities").and_then(|cs| {
             Some(Content::Cities(
                 cs.as_array()

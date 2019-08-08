@@ -20,8 +20,7 @@ pub struct Map {
 }
 
 impl Map {
-    /// Parses a `Map` from the TOML data in `s`
-    pub fn from_toml(s: &str) -> Self {
+    pub(crate) fn from_toml(s: &str) -> Self {
         let toml = s.parse::<Value>().expect(INVALID_TOML);
         let width = toml
             .get("width")
@@ -36,7 +35,6 @@ impl Map {
         let mut hexes = vec![vec![None; height as usize]; width as usize];
         let hexes_toml = toml.get("hexes").expect(HEXES_MISSING);
         for value in hexes_toml.as_array().expect(HEXES_TYPEERROR) {
-            let hex = Hex::from_toml(value);
             let x = value
                 .get("x")
                 .expect(X_MISSING)
@@ -50,6 +48,7 @@ impl Map {
             if hexes[x as usize][y as usize].is_some() {
                 panic!("hex at x={}, y={} is not empty", x, y);
             }
+            let hex = Hex::from_toml(value);
             hexes[x as usize][y as usize] = Some(hex);
         }
         Self { hexes }

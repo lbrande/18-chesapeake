@@ -2,45 +2,45 @@ width = 12
 height = 7
 
 [[hexes]]
+x = 0
+y = 1
 rails = [
     {edges = [5], location = {values = [40, 50, 60, 80], name = "Pittsburgh", start = "P&LE"}}
 ]
 color = "Red"
-x = 0
-y = 1
 
 [[hexes]]
+x = 0
+y = 3
 rails = [
     {edges = [4], location = {values = [40, 60, 80, 100], name = "Ohio"}},
     {edges = [5], location = {values = [40, 60, 80, 100], name = "Ohio"}}
 ]
 color = "Red"
-x = 0
-y = 3
 
 [[hexes]]
+x = 0
+y = 6
 rails = [
     {edges = [4], location = {values = [40, 50, 60, 80], name = "West Virginia Coal"}}
 ]
 color = "Red"
-x = 0
-y = 6
 
 [[hexes]]
+x = 1
+y = 0
 rails = [
     {edges = [0], location = {values = [40, 50, 60, 80], name = "Pittsburgh"}}
 ]
 color = "Red"
-x = 1
-y = 0
 
 [[hexes]]
+x = 1
+y = 1
 cities = [
     {value = 10, spots = 0, name = "Charleroi"},
     {value = 10, spots = 0, name = "Connellsville"}
 ]
-x = 1
-y = 1
 
 [[hexes]]
 x = 1
@@ -55,28 +55,28 @@ x = 1
 y = 4
 
 [[hexes]]
-terrain = "Mountain"
 x = 1
 y = 5
+terrain = "Mountain"
 
 [[hexes]]
+x = 1
+y = 6
 rails = [
     {edges = [4], location = {values = [40, 50, 60, 80], name = "West Virginia Coal"}}
 ]
 color = "Red"
-x = 1
-y = 6
 
 [[hexes]]
 x = 2
 y = 1
 
 [[hexes]]
+x = 2
+y = 2
 cities = [
     {value = 20, spots = 1, name = "Green Spring"}
 ]
-x = 2
-y = 2
 
 [[hexes]]
 x = 2
@@ -91,71 +91,71 @@ x = 2
 y = 5
 
 [[hexes]]
+x = 2
+y = 6
 terrain = "Mountain"
 cities = [
     {value = 20, spots = 1, name = "Lynchburg", start = "N&W"}
 ]
-x = 2
-y = 6
 
 [[hexes]]
+x = 3
+y = 0
 terrain = "Mountain"
 private = "C&O"
 cities = [
     {value = 20, spots = 1, name = "Berlin"}
 ]
-x = 3
-y = 0
 
 [[hexes]]
-terrain = "Mountain"
 x = 3
 y = 1
+terrain = "Mountain"
 
 [[hexes]]
-terrain = "Mountain"
 x = 3
 y = 2
+terrain = "Mountain"
 
 [[hexes]]
+x = 3
+y = 3
 terrain = "Mountain"
 cities = [
     {value = 20, spots = 1, name = "Leesburg"}
 ]
-x = 3
-y = 3
 
 [[hexes]]
-terrain = "Mountain"
 x = 3
 y = 4
+terrain = "Mountain"
 
 [[hexes]]
+x = 3
+y = 5
 cities = [
     {value = 20, spots = 1, name = "Charlottesville"}
 ]
-x = 3
-y = 5
 
 [[hexes]]
+x = 4
+y = 0
 rails = [
     {edges = [1, 5]}
 ]
 color = "Gray"
-x = 4
-y = 0
 
 [[hexes]]
+x = 4
+y = 1
 cities = [
     {value = 20, spots = 1, name = "Hagerstown"}
 ]
-x = 4
-y = 1
 
 [[hexes]]
-terrain = "Mountain"
 x = 4
 y = 2
+terrain = "Mountain"
 
 [[hexes]]
 x = 4
@@ -166,113 +166,115 @@ x = 4
 y = 4
 
 [[hexes]]
+x = 4
+y = 5
 cities = [
     {value = 10, spots = 0, name = "Fredericksburg"},
 ]
-x = 4
-y = 5
 
 [[hexes]]
 x = 4
 y = 6
 
 [[hexes]]
+x = 5
+y = 0
 cities = [
     {value = 20, spots = 1, name = "Harrisburg", start = "PRR"}
 ]
-x = 5
-y = 0
 
 [[hexes]]
-private = "B&S"
 x = 5
 y = 1
+private = "B&S"
 
 [[hexes]]
 x = 5
 y = 2
 
 [[hexes]]
+x = 5
+y = 3
 cities = [
     {value = 30, spots = 1, name= "Washington DC"}
 ]
-x = 5
-y = 3
 
 [[hexes]]
-terrain = "River"
 x = 5
 y = 4
+terrain = "River"
 
 [[hexes]]
 x = 5
 y = 5
 
 [[hexes]]
+x = 5
+y = 6
 rails = [
     {edges = [3, 4]}
 ]
 color = "Gray"
-x = 5
-y = 6
 
 [[hexes]]
+x = 6
+y = 0
 rails = [
     {edges = [0, 1]},
     {edges = [1, 5]}
 ]
 color = "Gray"
-x = 6
-y = 0
 
 [[hexes]]
+x = 6
+y = 1
 terrain = "River"
 cities = [
     {value = 10, spots = 0, name = "Columbia"}
 ]
-x = 6
-y = 1
 
 [[hexes]]
-private = "B&S"
 x = 6
 y = 2
+private = "B&S"
 
 [[hexes]]
 x = 6
 y = 3
 
 [[hexes]]
-terrain = "River"
 x = 6
 y = 4
+terrain = "River"
 
 [[hexes]]
-terrain = "River"
 x = 6
 y = 5
+terrain = "River"
 
 [[hexes]]
+x = 6
+y = 6
 cities = [
     {value = 20, spots = 1, name = "Richmond", start = "C&O"}
 ]
-x = 6
-y = 6
 
 [[hexes]]
-private = "C-P"
 x = 7
 y = 0
+private = "C-P"
 
 [[hexes]]
+x = 7
+y = 1
 terrain = "River"
 cities = [
     {value = 20, spots = 1, name = "Strasburg", start = "SRR"}
 ]
-x = 7
-y = 1
 
 [[hexes]]
+x = 7
+y = 2
 terrain = "River"
 rails = [
     {edges = [1], city = { value = 30, spots = 1, name = "Baltimore", start = "B&O"}},
@@ -280,71 +282,69 @@ rails = [
 ]
 color = "Yellow"
 upgrades = [-3, -4, -5]
-x = 7
-y = 2
 
 [[hexes]]
-terrain = "River"
 x = 7
 y = 5
+terrain = "River"
 
 [[hexes]]
+x = 7
+y = 6
 rails = [
     {edges = [2], location = {values = [30, 40, 50, 60], name = "Norfolk"}}
 ]
 color = "Red"
-x = 7
-y = 6
 
 [[hexes]]
-private = "C-P"
 x = 8
 y = 1
+private = "C-P"
 
 [[hexes]]
+x = 8
+y = 2
 terrain = "River"
 cities = [
     {value = 10, spots = 0, name = "Wilmington"}
 ]
-x = 8
-y = 2
 
 [[hexes]]
 x = 8
 y = 3
 
 [[hexes]]
+x = 8
+y = 4
 rails = [
     {edges = [3, 5], city = {value = 30, spots = 0, name = "Delmarva Peninsula"}}
 ]
 color = "Gray"
-x = 8
-y = 4
 
 [[hexes]]
+x = 9
+y = 0
 cities = [
     {value = 20, spots = 1, name = "Allentown", start = "LV"}
 ]
-x = 9
-y = 0
 
 [[hexes]]
+x = 9
+y = 1
 rails = [
     {edges = [0], city = { value = 30, spots = 1, name = "Philadelphia"}},
     {edges = [3], city = { value = 30, spots = 1, name = "Philadelphia"}}
 ]
 color = "Yellow"
 upgrades = [-3, -4, -5]
-x = 9
-y = 1
 
 [[hexes]]
+x = 9
+y = 2
 terrain = "River"
 cities = [
     {value = 20, spots = 1, name = "Camden", start = "C&A"}
 ]
-x = 9
-y = 2
 
 [[hexes]]
 x = 9
@@ -355,46 +355,46 @@ x = 9
 y = 4
 
 [[hexes]]
+x = 10
+y = 0
 rails = [
     {edges = [0, 1], city = {value = 30, spots = 0, name = "Easton"}}
 ]
 color = "Gray"
-x = 10
-y = 0
 
 [[hexes]]
+x = 10
+y = 1
 private = "D&R"
 cities = [
     {value = 10, spots = 0, name = "Trenton"},
     {value = 10, spots = 0, name = "Amboy"}
 ]
-x = 10
-y = 1
 
 [[hexes]]
+x = 10
+y = 2
 cities = [
     {value = 10, spots = 0, name = "Princeton"},
     {value = 10, spots = 0, name = "Burlington"}
 ]
-x = 10
-y = 2
 
 [[hexes]]
+x = 10
+y = 3
 rails = [
     {edges = [2, 3]}
 ]
 color = "Gray"
-x = 10
-y = 3
 
 [[hexes]]
+x = 11
+y = 0
 rails = [
     {edges = [0], location = {values = [40, 60, 80, 100], name = "New York"}},
     {edges = [1], location = {values = [40, 60, 80, 100], name = "New York"}}
 ]
 color = "Red"
-x = 11
-y = 0
 
 [[hexes]]
 x = 11

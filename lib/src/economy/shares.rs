@@ -14,7 +14,7 @@ impl Shares {
         let mut shares = HashMap::new();
         let mut president_shares = HashSet::new();
         for &id in PubComId::values() {
-            shares.insert(id, 0);
+            shares.insert(id, 8);
             president_shares.insert(id);
         }
         Self {

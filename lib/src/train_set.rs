@@ -17,8 +17,7 @@ pub struct TrainSet {
 }
 
 impl TrainSet {
-    /// Parses a `TileSet` from the TOML data in `s`
-    pub fn from_toml(s: &str) -> Self {
+    pub(crate) fn from_toml(s: &str) -> Self {
         let toml = s.parse::<Value>().expect(INVALID_TOML);
         let mut trains = HashSet::new();
         let trains_toml = toml.get("trains").expect(TRAINS_MISSING);
