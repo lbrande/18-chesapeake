@@ -1,0 +1,23 @@
+[[trains]]
+train = "2"
+count = 7
+
+[[trains]]
+train = "3"
+count = 6
+
+[[trains]]
+train = "4"
+count = 5
+
+[[trains]]
+train = "5"
+count = 3
+
+[[trains]]
+train = "6"
+count = 2
+
+[[trains]]
+train = "D"
+count = -1
