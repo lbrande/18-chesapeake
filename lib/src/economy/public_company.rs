@@ -1,5 +1,6 @@
 use crate::{PubComId, TrainId};
 use std::collections::HashSet;
+use std::hash::{Hash, Hasher};
 
 #[derive(Clone, Debug)]
 /// Represents a public company
@@ -16,5 +17,19 @@ impl PublicCompany {
             capital,
             trains: HashSet::new(),
         }
+    }
+}
+
+impl PartialEq for PublicCompany {
+    fn eq(&self, other: &Self) -> bool {
+        self.id == other.id
+    }
+}
+
+impl Eq for PublicCompany {}
+
+impl Hash for PublicCompany {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.id.hash(state)
     }
 }

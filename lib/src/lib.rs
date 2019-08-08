@@ -7,10 +7,12 @@
 //! [18Chesapeake](https://boardgamegeek.com/boardgame/253608/18chesapeake).
 
 pub mod economy;
+mod game;
 pub mod geography;
 mod ids;
 mod train_set;
 
+pub use game::Game;
 pub use ids::*;
 pub use train_set::TrainSet;
 
