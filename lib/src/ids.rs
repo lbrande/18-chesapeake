@@ -287,3 +287,35 @@ impl FromStr for TrainId {
         }
     }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+/// Represents a game phase
+pub enum PhaseId {
+    /// 2 train phase
+    Phase2,
+    /// 3 train phase
+    Phase3,
+    /// 4 train phase
+    Phase4,
+    /// 5 train phase
+    Phase5,
+    /// 6 train phase
+    Phase6,
+    /// Diesel phase
+    PhaseD,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+/// Represents a game round
+pub enum RoundId {
+    /// Private auction
+    PrivAuction,
+    /// Stock round
+    StockRound,
+    /// First operating round
+    OperatingRound1,
+    /// Second operating round
+    OperatingRound2,
+    /// Third operating round
+    OperatingRound3,
+}
