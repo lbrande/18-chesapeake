@@ -18,4 +18,9 @@ impl Player {
             privates: HashSet::new(),
         }
     }
+
+    /// Returns the capital of this player
+    pub fn capital(&self) -> u32 {
+        self.capital
+    }
 }

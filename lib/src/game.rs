@@ -1,6 +1,6 @@
 use crate::economy::{ParTrack, Player, PrivateAuction, PublicCompany, Shares, StockChart};
 use crate::geography::{Map, TileSet};
-use crate::{PhaseId, PubComId, RoundId, TrainSet};
+use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs::read_to_string;
 
@@ -19,6 +19,7 @@ pub struct Game {
     par_track: ParTrack,
     ipo: Shares,
     bank_pool: Shares,
+    bank_amount: u32,
 }
 
 impl Game {
@@ -40,7 +41,14 @@ impl Game {
             par_track: ParTrack::from_toml(&read_toml_file("par_track")),
             ipo: Shares::ipo_shares(),
             bank_pool: Shares::bank_pool_shares(),
+            bank_amount: 8000,
         }
+    }
+
+    /// Places a bid on a private company
+    pub fn place_bid(&mut self, player: usize, private: PrivComId, amount: u32) -> bool {
+        self.private_auction
+            .place_bid(2400 / self.players.len() as u32, player, private, amount)
     }
 }
 
