@@ -18,6 +18,7 @@ impl PrivateAuction {
         }
     }
 
+    // Returns whether the bid was placed
     pub(crate) fn place_bid(
         &mut self,
         capital: u32,
@@ -34,7 +35,8 @@ impl PrivateAuction {
         }
     }
 
-    pub(crate) fn buy_current(&mut self, capital: u32, player: usize) -> bool {
+    /// Returns the private company that was bought if any
+    pub(crate) fn buy_current(&mut self, capital: u32, player: usize) -> Option<PrivComId> {
         if let Some(current) = self.current {
             if current.get_cost() == self.max_bid(current)
                 && self.can_afford_bid(capital, player, current, current.get_cost())
@@ -43,15 +45,16 @@ impl PrivateAuction {
                     .find(|p| p.get_cost() > current.get_cost())
                     .cloned();
                 self.passes = 0;
-                true
+                Some(current)
             } else {
-                false
+                None
             }
         } else {
-            false
+            None
         }
     }
 
+    /// Returns the number of consecutive passes made
     pub(crate) fn pass(&mut self, player: usize) -> u32 {
         if let Some(current) = self.current {
             if current.get_cost() == self.max_bid(current) {

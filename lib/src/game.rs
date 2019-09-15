@@ -50,6 +50,16 @@ impl Game {
         self.private_auction
             .place_bid(self.players[player].capital(), player, private, amount)
     }
+
+    /// Buys the current (cheapest) private company
+    pub fn buy_current(&mut self, player: usize) -> bool {
+        if let Some(private) = self.private_auction.buy_current(self.players[player].capital(), player) {
+            self.players[player].buy_private(private, private.get_cost());
+            true
+        } else {
+            false
+        }
+    }
 }
 
 fn read_toml_file(name: &str) -> String {
