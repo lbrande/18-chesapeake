@@ -48,7 +48,7 @@ impl Game {
     /// Places a bid on a private company
     pub fn place_bid(&mut self, player: usize, private: PrivComId, amount: u32) -> bool {
         self.private_auction
-            .place_bid(2400 / self.players.len() as u32, player, private, amount)
+            .place_bid(self.players[player].capital(), player, private, amount)
     }
 }
 
