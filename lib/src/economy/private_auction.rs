@@ -6,13 +6,13 @@ use std::collections::HashMap;
 pub struct PrivateAuction {
     current: Option<PrivComId>,
     bids: Vec<HashMap<PrivComId, u32>>,
-    passes: u32,
+    passes: usize,
 }
 
 impl PrivateAuction {
     pub(crate) fn new(player_count: usize) -> Self {
         Self {
-            current: Some(PrivComId::DAndR),
+            current: Some(PrivComId::DAndR(20)),
             bids: vec![HashMap::new(); player_count],
             passes: 0,
         }
@@ -27,24 +27,24 @@ impl PrivateAuction {
         amount: u32,
     ) -> bool {
         if self.bid_allowed(capital, player, private, amount) {
-            self.bids[player].insert(private, amount);
             self.passes = 0;
+            self.bids[player].insert(private, amount);
             true
         } else {
             false
         }
     }
 
-    /// Returns the private company that was bought if any
+    /// Returns the private company bought if any
     pub(crate) fn buy_current(&mut self, capital: u32, player: usize) -> Option<PrivComId> {
         if let Some(current) = self.current {
             if current.get_cost() == self.max_bid(current)
                 && self.can_afford_bid(capital, player, current, current.get_cost())
             {
+                self.passes = 0;
                 self.current = PrivComId::values()
                     .find(|p| p.get_cost() > current.get_cost())
                     .cloned();
-                self.passes = 0;
                 Some(current)
             } else {
                 None
@@ -54,19 +54,52 @@ impl PrivateAuction {
         }
     }
 
-    /// Returns the number of consecutive passes made
-    pub(crate) fn pass(&mut self, player: usize) -> u32 {
+    /// Returns whether the pass was done and whether everyone has passed
+    pub(crate) fn pass_on_current(&mut self, player_count: usize) -> (bool, bool) {
         if let Some(current) = self.current {
             if current.get_cost() == self.max_bid(current) {
-                self.passes += 1;
+                if current.get_cost() == 0 {
+                    (false, false)
+                } else {
+                    self.passes += 1;
+                    if self.passes == player_count {
+                        self.passes = 0;
+                        if let PrivComId::DAndR(cost) = current {
+                            self.current = Some(PrivComId::DAndR(cost - 5));
+                        }
+                        (true, true)
+                    } else {
+                        (true, false)
+                    }
+                }
             } else {
-                self.passes = 0;
-                self.bids[player].remove(&current);
+                (false, false)
             }
         } else {
-            self.passes = 0;
+            (false, false)
         }
-        self.passes
+    }
+
+    /// Returns the private company sold, the player who bought it and the price it was bought for if a private company was sold
+    pub(crate) fn pass_in_auction(&mut self, player: usize) -> Option<(PrivComId, usize, u32)> {
+        if let Some(current) = self.current {
+            if self.bids[player].contains_key(&current) {
+                self.passes = 0;
+                self.bids[player].remove(&current);
+                if let Some((player, amount)) = self.only_bid(current) {
+                    self.current = PrivComId::values()
+                        .find(|p| p.get_cost() > current.get_cost())
+                        .cloned();
+                    Some((current, player, amount))
+                } else {
+                    None
+                }
+            } else {
+                None
+            }
+        } else {
+            None
+        }
     }
 
     fn bid_allowed(&self, capital: u32, player: usize, private: PrivComId, amount: u32) -> bool {
@@ -102,5 +135,19 @@ impl PrivateAuction {
             }
         }
         max_bid
+    }
+
+    fn only_bid(&self, private: PrivComId) -> Option<(usize, u32)> {
+        let mut only_bid = None;
+        for i in 0..self.bids.len() {
+            if let Some(&bid) = self.bids[i].get(&private) {
+                if only_bid.is_none() {
+                    only_bid = Some((i, bid));
+                } else {
+                    return None;
+                }
+            }
+        }
+        only_bid
     }
 }

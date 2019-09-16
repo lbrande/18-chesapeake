@@ -121,7 +121,7 @@ impl FromStr for PubComId {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum PrivComId {
     /// Delaware and Raritan Canal
-    DAndR,
+    DAndR(u32),
     /// Columbia-Philadelphia Railroad
     CToP,
     /// Baltimore and Susquehanna Railroad
@@ -138,7 +138,7 @@ impl PrivComId {
     /// Returns the name of this `PrivComId`
     pub fn get_name(&self) -> &str {
         match self {
-            PrivComId::DAndR => "Delaware and Raritan Canal",
+            PrivComId::DAndR(_) => "Delaware and Raritan Canal",
             PrivComId::CToP => "Columbia-Philadelphia Railroad",
             PrivComId::BAndS => "Baltimore and Susquehanna Railroad",
             PrivComId::CAndO => "Chesapeake and Ohio Canal",
@@ -150,7 +150,7 @@ impl PrivComId {
     /// Returns the cost of this `PrivComId`
     pub fn get_cost(self) -> u32 {
         match self {
-            PrivComId::DAndR => 20,
+            PrivComId::DAndR(cost) => cost,
             PrivComId::CToP => 40,
             PrivComId::BAndS => 50,
             PrivComId::CAndO => 80,
@@ -162,7 +162,7 @@ impl PrivComId {
     /// Returns the revenue of this `PrivComId`
     pub fn get_revenue(self) -> u32 {
         match self {
-            PrivComId::DAndR => 5,
+            PrivComId::DAndR(_) => 5,
             PrivComId::CToP => 10,
             PrivComId::BAndS => 10,
             PrivComId::CAndO => 15,
@@ -174,7 +174,7 @@ impl PrivComId {
     /// Returns an iterator over the possible values of `PrivComId`
     pub fn values() -> Iter<'static, Self> {
         [
-            PrivComId::DAndR,
+            PrivComId::DAndR(20),
             PrivComId::CToP,
             PrivComId::BAndS,
             PrivComId::CAndO,
@@ -188,7 +188,7 @@ impl PrivComId {
 impl Display for PrivComId {
     fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
         match self {
-            PrivComId::DAndR => write!(f, "D&R"),
+            PrivComId::DAndR(_) => write!(f, "D&R"),
             PrivComId::CToP => write!(f, "C-P"),
             PrivComId::BAndS => write!(f, "B&S"),
             PrivComId::CAndO => write!(f, "C&O"),
@@ -203,7 +203,7 @@ impl FromStr for PrivComId {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
-            "D&R" => Ok(PrivComId::DAndR),
+            "D&R" => Ok(PrivComId::DAndR(20)),
             "C-P" => Ok(PrivComId::CToP),
             "B&S" => Ok(PrivComId::BAndS),
             "C&O" => Ok(PrivComId::CAndO),
