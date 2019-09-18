@@ -52,19 +52,44 @@ impl Game {
     }
 
     /// Places a bid on a private company
-    pub fn place_bid(&mut self, private: PrivComId, amount: u32) -> bool {
+    pub fn place_bid(&mut self, private: PrivComId, amount: u32) {
         self.priv_auction
             .place_bid(&self.players[self.current], private, amount)
     }
 
+    /// Returns whether the specified bid is allowed
+    pub fn bid_allowed(&self, private: PrivComId, amount: u32) -> bool {
+        self.priv_auction
+            .bid_allowed(&self.players[self.current], private, amount)
+    }
+
     /// Buys the current (cheapest) private company
-    pub fn buy_current(&mut self) -> bool {
+    pub fn buy_current(&mut self) {
         if let Some(private) = self.priv_auction.buy_current(&self.players[self.current]) {
-            self.players[self.current].buy_private(private, private.get_cost());
-            true
-        } else {
-            false
+            self.players[self.current].buy_private(private, private.cost());
         }
+    }
+
+    /// Returns whether buying the current (cheapest) private company is allowed
+    pub fn buy_allowed(&self) -> bool {
+        self.priv_auction.buy_allowed(&self.players[self.current])
+    }
+
+    /// Passes
+    pub fn pass(&mut self) {
+        if self.priv_auction.is_done() {
+            //TODO
+        } else if self.priv_auction.in_auction() {
+            self.priv_auction.pass_auction(&self.players[self.current]);
+        } else {
+            self.priv_auction
+                .pass_current(&self.players[self.current], self.players.len());
+        }
+    }
+
+    /// Returns whether passing is allowed
+    pub fn pass_allowed(&self) -> bool {
+        self.priv_auction.is_done() || self.priv_auction.pass_allowed(&self.players[self.current])
     }
 }
 

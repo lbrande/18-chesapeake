@@ -55,7 +55,7 @@ pub enum PubComId {
 
 impl PubComId {
     /// Returns the name of this `PubComId`
-    pub fn get_name(&self) -> &str {
+    pub fn name(&self) -> &str {
         match self {
             PubComId::BAndO => "Baltimore and Ohio Railroad",
             PubComId::CAndA => "Camden and Amboy Railroad",
@@ -136,7 +136,7 @@ pub enum PrivComId {
 
 impl PrivComId {
     /// Returns the name of this `PrivComId`
-    pub fn get_name(&self) -> &str {
+    pub fn name(&self) -> &str {
         match self {
             PrivComId::DAndR(_) => "Delaware and Raritan Canal",
             PrivComId::CToP => "Columbia-Philadelphia Railroad",
@@ -148,7 +148,7 @@ impl PrivComId {
     }
 
     /// Returns the cost of this `PrivComId`
-    pub fn get_cost(self) -> u32 {
+    pub fn cost(self) -> u32 {
         match self {
             PrivComId::DAndR(cost) => cost,
             PrivComId::CToP => 40,
@@ -160,7 +160,7 @@ impl PrivComId {
     }
 
     /// Returns the revenue of this `PrivComId`
-    pub fn get_revenue(self) -> u32 {
+    pub fn revenue(self) -> u32 {
         match self {
             PrivComId::DAndR(_) => 5,
             PrivComId::CToP => 10,
