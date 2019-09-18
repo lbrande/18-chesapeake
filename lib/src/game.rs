@@ -4,11 +4,16 @@ use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs::read_to_string;
 
+macro_rules! current_player {
+    ($self:ident) => { &$self.players[$self.current] }
+}
+
 /// Represents a game
 #[derive(Clone, Debug)]
 pub struct Game {
     phase: PhaseId,
     round: RoundId,
+    current: usize,
     players: Vec<Player>,
     publics: HashMap<PubComId, PublicCompany>,
     private_auction: PrivateAuction,
@@ -28,10 +33,15 @@ impl Game {
         if player_count < 2 || player_count > 6 {
             panic!("player_count out of bounds");
         }
+        let mut players = Vec::with_capacity(player_count);
+        for id in 0..player_count {
+            players.push(Player::new(id, 2400 / player_count as u32));
+        }
         Self {
             phase: PhaseId::Phase2,
             round: RoundId::PrivAuction,
-            players: vec![Player::new(2400 / player_count as u32); player_count],
+            current: 0,
+            players,
             publics: HashMap::new(),
             private_auction: PrivateAuction::new(player_count),
             map: Map::from_toml(&read_toml_file("map")),
@@ -46,18 +56,18 @@ impl Game {
     }
 
     /// Places a bid on a private company
-    pub fn place_bid(&mut self, player: usize, private: PrivComId, amount: u32) -> bool {
-        self.private_auction
-            .place_bid(self.players[player].capital(), player, private, amount)
+    pub fn place_bid(&mut self, private: PrivComId, amount: u32) -> bool {
+        self.private_auction.place_bid(
+            current_player!(self),
+            private,
+            amount,
+        )
     }
 
     /// Buys the current (cheapest) private company
-    pub fn buy_current(&mut self, player: usize) -> bool {
-        if let Some(private) = self
-            .private_auction
-            .buy_current(self.players[player].capital(), player)
-        {
-            self.players[player].buy_private(private, private.get_cost());
+    pub fn buy_current(&mut self) -> bool {
+        if let Some(private) = self.private_auction.buy_current(current_player!(self)) {
+            self.players[self.current].buy_private(private, private.get_cost());
             true
         } else {
             false

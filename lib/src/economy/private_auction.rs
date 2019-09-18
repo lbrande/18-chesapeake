@@ -1,3 +1,4 @@
+use crate::economy::Player;
 use crate::PrivComId;
 use std::collections::HashMap;
 
@@ -21,14 +22,13 @@ impl PrivateAuction {
     // Returns whether the bid was placed
     pub(crate) fn place_bid(
         &mut self,
-        capital: u32,
-        player: usize,
+        player: &Player,
         private: PrivComId,
         amount: u32,
     ) -> bool {
-        if self.bid_allowed(capital, player, private, amount) {
+        if self.bid_allowed(player, private, amount) {
             self.passes = 0;
-            self.bids[player].insert(private, amount);
+            self.bids[player.id()].insert(private, amount);
             true
         } else {
             false
@@ -36,10 +36,10 @@ impl PrivateAuction {
     }
 
     /// Returns the private company bought if any
-    pub(crate) fn buy_current(&mut self, capital: u32, player: usize) -> Option<PrivComId> {
+    pub(crate) fn buy_current(&mut self, player: &Player) -> Option<PrivComId> {
         if let Some(current) = self.current {
             if current.get_cost() == self.max_bid(current)
-                && self.can_afford_bid(capital, player, current, current.get_cost())
+                && self.can_afford_bid(player, current, current.get_cost())
             {
                 self.passes = 0;
                 self.current = PrivComId::values()
@@ -81,11 +81,11 @@ impl PrivateAuction {
     }
 
     /// Returns the private company sold, the player who bought it and the price it was bought for if a private company was sold
-    pub(crate) fn pass_in_auction(&mut self, player: usize) -> Option<(PrivComId, usize, u32)> {
+    pub(crate) fn pass_in_auction(&mut self, player: &Player) -> Option<(PrivComId, usize, u32)> {
         if let Some(current) = self.current {
-            if self.bids[player].contains_key(&current) {
+            if self.bids[player.id()].contains_key(&current) {
                 self.passes = 0;
-                self.bids[player].remove(&current);
+                self.bids[player.id()].remove(&current);
                 if let Some((player, amount)) = self.only_bid(current) {
                     self.current = PrivComId::values()
                         .find(|p| p.get_cost() > current.get_cost())
@@ -102,26 +102,26 @@ impl PrivateAuction {
         }
     }
 
-    fn bid_allowed(&self, capital: u32, player: usize, private: PrivComId, amount: u32) -> bool {
+    fn bid_allowed(&self, player: &Player, private: PrivComId, amount: u32) -> bool {
         if let Some(current) = self.current {
-            self.can_afford_bid(capital, player, private, amount)
+            self.can_afford_bid(player, private, amount)
                 && amount + 5 >= self.max_bid(private)
                 && ((private == current
-                    && self.bids[player]
+                    && self.bids[player.id()]
                         .get(&private)
                         .map_or(false, |&a| a != self.max_bid(private)))
-                    || (private != current && !self.bids[player].contains_key(&private)))
+                    || (private != current && !self.bids[player.id()].contains_key(&private)))
         } else {
             false
         }
     }
 
-    fn can_afford_bid(&self, capital: u32, player: usize, private: PrivComId, amount: u32) -> bool {
-        let previous_total_amount: u32 = self.bids[player].iter().map(|(_, a)| a).sum();
-        if let Some(&bid) = self.bids[player].get(&private) {
-            amount + previous_total_amount - bid <= capital
+    fn can_afford_bid(&self, player: &Player, private: PrivComId, amount: u32) -> bool {
+        let previous_total_amount: u32 = self.bids[player.id()].iter().map(|(_, a)| a).sum();
+        if let Some(&bid) = self.bids[player.id()].get(&private) {
+            amount + previous_total_amount - bid <= player.capital()
         } else {
-            amount + previous_total_amount <= capital
+            amount + previous_total_amount <= player.capital()
         }
     }
 
