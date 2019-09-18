@@ -1,12 +1,8 @@
-use crate::economy::{ParTrack, Player, PrivateAuction, PublicCompany, Shares, StockChart};
+use crate::economy::{ParTrack, Player, PrivAuction, PubCom, Shares, StockChart};
 use crate::geography::{Map, TileSet};
 use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs::read_to_string;
-
-macro_rules! current_player {
-    ($self:ident) => { &$self.players[$self.current] }
-}
 
 /// Represents a game
 #[derive(Clone, Debug)]
@@ -15,8 +11,8 @@ pub struct Game {
     round: RoundId,
     current: usize,
     players: Vec<Player>,
-    publics: HashMap<PubComId, PublicCompany>,
-    private_auction: PrivateAuction,
+    pub_coms: HashMap<PubComId, PubCom>,
+    priv_auction: PrivAuction,
     map: Map,
     tile_set: TileSet,
     train_set: TrainSet,
@@ -42,8 +38,8 @@ impl Game {
             round: RoundId::PrivAuction,
             current: 0,
             players,
-            publics: HashMap::new(),
-            private_auction: PrivateAuction::new(player_count),
+            pub_coms: HashMap::new(),
+            priv_auction: PrivAuction::new(player_count),
             map: Map::from_toml(&read_toml_file("map")),
             tile_set: TileSet::from_toml(&read_toml_file("tile_set")),
             train_set: TrainSet::from_toml(&read_toml_file("train_set")),
@@ -57,16 +53,13 @@ impl Game {
 
     /// Places a bid on a private company
     pub fn place_bid(&mut self, private: PrivComId, amount: u32) -> bool {
-        self.private_auction.place_bid(
-            current_player!(self),
-            private,
-            amount,
-        )
+        self.priv_auction
+            .place_bid(&self.players[self.current], private, amount)
     }
 
     /// Buys the current (cheapest) private company
     pub fn buy_current(&mut self) -> bool {
-        if let Some(private) = self.private_auction.buy_current(current_player!(self)) {
+        if let Some(private) = self.priv_auction.buy_current(&self.players[self.current]) {
             self.players[self.current].buy_private(private, private.get_cost());
             true
         } else {

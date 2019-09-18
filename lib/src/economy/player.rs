@@ -8,7 +8,7 @@ pub struct Player {
     id: usize,
     capital: u32,
     shares: Shares,
-    privates: HashSet<PrivComId>,
+    priv_coms: HashSet<PrivComId>,
 }
 
 impl Player {
@@ -17,13 +17,13 @@ impl Player {
             id,
             capital,
             shares: Shares::player_shares(),
-            privates: HashSet::new(),
+            priv_coms: HashSet::new(),
         }
     }
 
     pub(crate) fn buy_private(&mut self, private: PrivComId, price: u32) {
         self.capital -= price;
-        self.privates.insert(private);
+        self.priv_coms.insert(private);
     }
 
     /// Returns the id of this player

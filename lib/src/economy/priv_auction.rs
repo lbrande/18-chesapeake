@@ -4,15 +4,15 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 /// Represents the auction for privates
-pub struct PrivateAuction {
+pub struct PrivAuction {
     current: Option<PrivComId>,
     bids: Vec<HashMap<PrivComId, u32>>,
     passes: usize,
 }
 
-impl PrivateAuction {
+impl PrivAuction {
     pub(crate) fn new(player_count: usize) -> Self {
-        Self {
+        PrivAuction {
             current: Some(PrivComId::DAndR(20)),
             bids: vec![HashMap::new(); player_count],
             passes: 0,
@@ -20,12 +20,7 @@ impl PrivateAuction {
     }
 
     // Returns whether the bid was placed
-    pub(crate) fn place_bid(
-        &mut self,
-        player: &Player,
-        private: PrivComId,
-        amount: u32,
-    ) -> bool {
+    pub(crate) fn place_bid(&mut self, player: &Player, private: PrivComId, amount: u32) -> bool {
         if self.bid_allowed(player, private, amount) {
             self.passes = 0;
             self.bids[player.id()].insert(private, amount);

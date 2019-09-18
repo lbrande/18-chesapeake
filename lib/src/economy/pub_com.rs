@@ -1,18 +1,21 @@
+use crate::PrivComId;
 use crate::TrainId;
 use std::collections::HashSet;
 
 #[derive(Clone, Debug)]
 /// Represents a public company
-pub struct PublicCompany {
+pub struct PubCom {
     capital: u32,
     trains: HashSet<TrainId>,
+    priv_coms: HashSet<PrivComId>,
 }
 
-impl PublicCompany {
+impl PubCom {
     pub(crate) fn new(capital: u32) -> Self {
-        Self {
+        PubCom {
             capital,
             trains: HashSet::new(),
+            priv_coms: HashSet::new(),
         }
     }
 }
