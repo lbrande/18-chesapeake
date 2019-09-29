@@ -26,6 +26,12 @@ impl Player {
         self.priv_coms.insert(private);
     }
 
+    pub(crate) fn operate_privs(&mut self) {
+        for private in &self.priv_coms {
+            self.capital += private.revenue();
+        }
+    }
+
     /// Returns the id of this player
     pub fn id(&self) -> usize {
         self.id

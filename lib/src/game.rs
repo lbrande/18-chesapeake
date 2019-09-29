@@ -81,19 +81,29 @@ impl Game {
         if self.priv_auction.is_done() {
             //TODO
         } else if self.priv_auction.in_auction() {
-            if let Some((private, player, price)) = self.priv_auction.pass_auction(&self.players[self.current]) {
+            if let Some((private, player, price)) =
+                self.priv_auction.pass_auction(&self.players[self.current])
+            {
                 self.players[player].buy_priv(private, price);
                 self.enter_first_stock_round_if_priv_auction_is_done();
             }
-        } else {
-            self.priv_auction
-                .pass_current(&self.players[self.current], self.players.len());
+        } else if self
+            .priv_auction
+            .pass_current(&self.players[self.current], self.players.len())
+        {
+            self.operate_privs();
         }
     }
 
     /// Returns whether passing is allowed
     pub fn pass_allowed(&self) -> bool {
         self.priv_auction.is_done() || self.priv_auction.pass_allowed(&self.players[self.current])
+    }
+
+    fn operate_privs(&mut self) {
+        for player in &mut self.players {
+            player.operate_privs();
+        }
     }
 
     fn enter_first_stock_round_if_priv_auction_is_done(&mut self) {
