@@ -99,7 +99,7 @@ impl PrivAuction {
     }
 
     pub(crate) fn is_done(&self) -> bool {
-        self.current.is_some()
+        self.current.is_none()
     }
 
     pub(crate) fn in_auction(&self) -> bool {
