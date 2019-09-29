@@ -21,7 +21,7 @@ impl Player {
         }
     }
 
-    pub(crate) fn buy_private(&mut self, private: PrivComId, price: u32) {
+    pub(crate) fn buy_priv(&mut self, private: PrivComId, price: u32) {
         self.capital -= price;
         self.priv_coms.insert(private);
     }
