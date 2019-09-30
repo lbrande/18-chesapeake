@@ -55,9 +55,11 @@ impl Game {
 
     /// Places a bid on a private company
     pub fn place_bid(&mut self, private: PrivComId, amount: u32) {
-        self.priv_auction
-            .place_bid(&self.players[self.current], private, amount);
-        self.advance_current_in_priv_auction();
+        if self.round == RoundId::StockRound {
+            self.priv_auction
+                .place_bid(&self.players[self.current], private, amount);
+            self.advance_current_in_priv_auction();
+        }
     }
 
     /// Returns whether the specified bid is allowed
@@ -72,7 +74,7 @@ impl Game {
             self.players[self.current].buy_priv(private, private.cost());
             self.priority = (self.current + 1) % self.players.len();
             self.advance_current_in_priv_auction();
-            self.enter_first_stock_round_if_priv_auction_is_done();
+            self.enter_stock_round_if_priv_auction_is_done();
         }
     }
 
@@ -83,32 +85,35 @@ impl Game {
 
     /// Passes
     pub fn pass(&mut self) {
-        if self.priv_auction.is_done() {
+        if self.round == RoundId::StockRound {
             //TODO
-        } else if self.priv_auction.in_auction() {
-            if let Some((private, player_id, price)) =
-                self.priv_auction.pass_auction(&self.players[self.current])
-            {
-                self.players[player_id].buy_priv(private, price);
-                self.advance_current_in_priv_auction();
-                self.enter_first_stock_round_if_priv_auction_is_done();
+        } else if self.round == RoundId::PrivAuction {
+            if self.priv_auction.in_auction() {
+                if let Some((private, player_id, price)) =
+                    self.priv_auction.pass_auction(&self.players[self.current])
+                {
+                    self.players[player_id].buy_priv(private, price);
+                    self.advance_current_in_priv_auction();
+                    self.enter_stock_round_if_priv_auction_is_done();
+                } else {
+                    self.advance_current_in_priv_auction();
+                }
             } else {
-                self.advance_current_in_priv_auction();
+                if self
+                    .priv_auction
+                    .pass_current(&self.players[self.current], self.players.len())
+                {
+                    self.operate_priv_coms();
+                }
+                self.advance_current();
             }
-        } else {
-            if self
-                .priv_auction
-                .pass_current(&self.players[self.current], self.players.len())
-            {
-                self.operate_priv_coms();
-            }
-            self.advance_current();
         }
     }
 
     /// Returns whether passing is allowed
     pub fn pass_allowed(&self) -> bool {
-        self.priv_auction.is_done() || self.priv_auction.pass_allowed(&self.players[self.current])
+        self.round == RoundId::StockRound
+            || self.priv_auction.pass_allowed(&self.players[self.current])
     }
 
     fn advance_current(&mut self) {
@@ -129,7 +134,7 @@ impl Game {
         }
     }
 
-    fn enter_first_stock_round_if_priv_auction_is_done(&mut self) {
+    fn enter_stock_round_if_priv_auction_is_done(&mut self) {
         if self.priv_auction.is_done() {
             self.round = RoundId::StockRound;
             self.current = self.priority;
