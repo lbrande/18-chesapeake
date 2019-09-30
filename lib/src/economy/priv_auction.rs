@@ -59,10 +59,10 @@ impl PrivAuction {
     }
 
     /// Returns whether everyone has passed
-    pub(crate) fn pass_current(&mut self, player: &Player, player_count: usize) -> bool {
+    pub(crate) fn pass_current(&mut self, player: &Player) -> bool {
         if let Some(current) = self.current_if_pass_allowed(player) {
             self.passes += 1;
-            if self.passes == player_count {
+            if self.passes == self.bids.len() {
                 self.passes = 0;
                 if let PrivComId::DAndR(cost) = current {
                     self.current = Some(PrivComId::DAndR(cost - 5));
@@ -110,22 +110,22 @@ impl PrivAuction {
         }
     }
 
-    pub(crate) fn next_player_in_auction(&self, player_count: usize) -> Option<usize> {
+    pub(crate) fn next_player_in_auction(&self) -> Option<usize> {
         if let Some(current) = self.current {
             if current.cost() == self.max_bid(current) {
                 None
             } else {
-                self.next_player_to_bid(player_count, current)
+                self.next_player_to_bid(current)
             }
         } else {
             None
         }
     }
 
-    fn next_player_to_bid(&self, player_count: usize, private: PrivComId) -> Option<usize> {
+    fn next_player_to_bid(&self, private: PrivComId) -> Option<usize> {
         if let Some(player_id) = self.player_id_with_max_bid(private) {
             for i in 1..self.bids.len() {
-                if self.bids[(player_id + i) % player_count]
+                if self.bids[(player_id + i) % self.bids.len()]
                     .get(&private)
                     .is_some()
                 {

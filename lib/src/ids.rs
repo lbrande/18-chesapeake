@@ -1,3 +1,4 @@
+use crate::economy::{PrivAuction, StockRound};
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::slice::Iter;
 use std::str::FromStr;
@@ -305,13 +306,13 @@ pub enum PhaseId {
     PhaseD,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Clone, Debug)]
 /// Represents a game round
 pub enum RoundId {
     /// Private auction
-    PrivAuction,
+    PrivAuction(PrivAuction),
     /// Stock round
-    StockRound,
+    StockRound(StockRound),
     /// First operating round
     OperatingRound1,
     /// Second operating round
