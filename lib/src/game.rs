@@ -10,6 +10,7 @@ pub struct Game {
     phase: PhaseId,
     round: RoundId,
     current: usize,
+    priority: usize,
     players: Vec<Player>,
     pub_coms: HashMap<PubComId, PubCom>,
     priv_auction: PrivAuction,
@@ -37,6 +38,7 @@ impl Game {
             phase: PhaseId::Phase2,
             round: RoundId::PrivAuction,
             current: 0,
+            priority: 0,
             players,
             pub_coms: HashMap::new(),
             priv_auction: PrivAuction::new(player_count),
@@ -68,6 +70,7 @@ impl Game {
     pub fn buy_current(&mut self) {
         if let Some(private) = self.priv_auction.buy_current(&self.players[self.current]) {
             self.players[self.current].buy_priv(private, private.cost());
+            self.priority = (self.current + 1) % self.players.len();
             self.advance_current_in_priv_auction();
             self.enter_first_stock_round_if_priv_auction_is_done();
         }
@@ -87,9 +90,11 @@ impl Game {
                 self.priv_auction.pass_auction(&self.players[self.current])
             {
                 self.players[player_id].buy_priv(private, price);
+                self.advance_current_in_priv_auction();
                 self.enter_first_stock_round_if_priv_auction_is_done();
+            } else {
+                self.advance_current_in_priv_auction();
             }
-            self.advance_current_in_priv_auction();
         } else {
             if self
                 .priv_auction
@@ -127,6 +132,7 @@ impl Game {
     fn enter_first_stock_round_if_priv_auction_is_done(&mut self) {
         if self.priv_auction.is_done() {
             self.round = RoundId::StockRound;
+            self.current = self.priority;
         }
     }
 }
