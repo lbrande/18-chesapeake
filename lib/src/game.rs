@@ -1,5 +1,6 @@
-use crate::economy::{ParTrack, Player, PrivAuction, PubCom, Shares, StockChart, StockRound};
+use crate::economy::{ParTrack, Player, PubCom, Shares, StockChart};
 use crate::geography::{Map, TileSet};
+use crate::rounds::{PrivAuction, StockRound};
 use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs::read_to_string;

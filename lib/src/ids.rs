@@ -1,4 +1,4 @@
-use crate::economy::{PrivAuction, StockRound};
+use crate::rounds::{PrivAuction, StockRound};
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::slice::Iter;
 use std::str::FromStr;

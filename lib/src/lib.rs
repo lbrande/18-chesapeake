@@ -10,6 +10,7 @@ pub mod economy;
 mod game;
 pub mod geography;
 mod ids;
+pub mod rounds;
 mod train_set;
 
 pub use game::Game;
