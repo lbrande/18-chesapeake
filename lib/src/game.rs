@@ -55,6 +55,7 @@ impl Game {
     pub fn place_bid(&mut self, private: PrivComId, amount: u32) {
         self.priv_auction
             .place_bid(&self.players[self.current], private, amount);
+        self.advance_current_in_priv_auction();
     }
 
     /// Returns whether the specified bid is allowed
@@ -67,6 +68,7 @@ impl Game {
     pub fn buy_current(&mut self) {
         if let Some(private) = self.priv_auction.buy_current(&self.players[self.current]) {
             self.players[self.current].buy_priv(private, private.cost());
+            self.advance_current_in_priv_auction();
             self.enter_first_stock_round_if_priv_auction_is_done();
         }
     }
@@ -81,17 +83,21 @@ impl Game {
         if self.priv_auction.is_done() {
             //TODO
         } else if self.priv_auction.in_auction() {
-            if let Some((private, player, price)) =
+            if let Some((private, player_id, price)) =
                 self.priv_auction.pass_auction(&self.players[self.current])
             {
-                self.players[player].buy_priv(private, price);
+                self.players[player_id].buy_priv(private, price);
                 self.enter_first_stock_round_if_priv_auction_is_done();
             }
-        } else if self
-            .priv_auction
-            .pass_current(&self.players[self.current], self.players.len())
-        {
-            self.operate_privs();
+            self.advance_current_in_priv_auction();
+        } else {
+            if self
+                .priv_auction
+                .pass_current(&self.players[self.current], self.players.len())
+            {
+                self.operate_priv_coms();
+            }
+            self.advance_current();
         }
     }
 
@@ -100,9 +106,21 @@ impl Game {
         self.priv_auction.is_done() || self.priv_auction.pass_allowed(&self.players[self.current])
     }
 
-    fn operate_privs(&mut self) {
+    fn advance_current(&mut self) {
+        self.current = (self.current + 1) % self.players.len();
+    }
+
+    fn advance_current_in_priv_auction(&mut self) {
+        if let Some(player_id) = self.priv_auction.next_player_in_auction(self.players.len()) {
+            self.current = player_id;
+        } else {
+            self.advance_current();
+        }
+    }
+
+    fn operate_priv_coms(&mut self) {
         for player in &mut self.players {
-            player.operate_privs();
+            player.operate_priv_coms();
         }
     }
 

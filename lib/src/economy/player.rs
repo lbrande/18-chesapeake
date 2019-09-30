@@ -26,7 +26,7 @@ impl Player {
         self.priv_coms.insert(private);
     }
 
-    pub(crate) fn operate_privs(&mut self) {
+    pub(crate) fn operate_priv_coms(&mut self) {
         for private in &self.priv_coms {
             self.capital += private.revenue();
         }
