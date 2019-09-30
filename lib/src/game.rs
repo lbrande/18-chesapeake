@@ -1,4 +1,4 @@
-use crate::economy::{ParTrack, Player, PrivAuction, PubCom, Shares, StockChart};
+use crate::economy::{ParTrack, Player, PrivAuction, PubCom, Shares, StockChart, StockRound};
 use crate::geography::{Map, TileSet};
 use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
@@ -14,6 +14,7 @@ pub struct Game {
     players: Vec<Player>,
     pub_coms: HashMap<PubComId, PubCom>,
     priv_auction: PrivAuction,
+    stock_round: StockRound,
     map: Map,
     tile_set: TileSet,
     train_set: TrainSet,
@@ -42,6 +43,7 @@ impl Game {
             players,
             pub_coms: HashMap::new(),
             priv_auction: PrivAuction::new(player_count),
+            stock_round: StockRound::new(false),
             map: Map::from_toml(&read_toml_file("map")),
             tile_set: TileSet::from_toml(&read_toml_file("tile_set")),
             train_set: TrainSet::from_toml(&read_toml_file("train_set")),
