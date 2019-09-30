@@ -125,7 +125,7 @@ impl PrivAuction {
     fn next_player_to_bid(&self, player_count: usize, private: PrivComId) -> Option<usize> {
         if let Some(player_id) = self.player_id_with_max_bid(private) {
             for i in 1..self.bids.len() {
-                if let Some(&bid) = self.bids[(player_id + i) % player_count].get(&private) {
+                if self.bids[(player_id + i) % player_count].get(&private).is_some() {
                     return Some(i);
                 }
             }
