@@ -32,6 +32,16 @@ impl Shares {
         Self::with_kind(Kind::Player)
     }
 
+    /// Returns the shares of this `Shares`
+    pub fn shares(&self) -> &HashMap<PubComId, u32> {
+        &self.shares
+    }
+
+    /// Returns the president shares of this `Shares`
+    pub fn president_shares(&self) -> &HashSet<PubComId> {
+        &self.president_shares
+    }
+
     fn with_kind(kind: Kind) -> Self {
         let mut shares = HashMap::new();
         for &id in PubComId::values() {

@@ -32,12 +32,12 @@ impl Player {
         }
     }
 
-    /// Returns the id of this player
+    /// Returns the id of this `Player`
     pub fn id(&self) -> usize {
         self.id
     }
 
-    /// Returns the capital of this player
+    /// Returns the capital of this `Player`
     pub fn capital(&self) -> u32 {
         self.capital
     }
