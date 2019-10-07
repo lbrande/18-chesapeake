@@ -129,6 +129,11 @@ impl Game {
         }
     }
 
+    /// Returns the current player id
+    pub fn current(&self) -> usize {
+        self.current
+    }
+
     fn advance_current(&mut self) {
         self.current = (self.current + 1) % self.players.len();
     }
