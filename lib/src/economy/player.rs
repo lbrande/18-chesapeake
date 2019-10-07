@@ -16,7 +16,7 @@ impl Player {
         Self {
             id,
             capital,
-            shares: Shares::player_shares(),
+            shares: Shares::empty_shares(),
             priv_coms: HashSet::new(),
         }
     }

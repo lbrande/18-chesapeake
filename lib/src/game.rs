@@ -47,7 +47,7 @@ impl Game {
             stock_chart: StockChart::from_toml(&read_toml_file("stock_chart")),
             par_track: ParTrack::from_toml(&read_toml_file("par_track")),
             ipo: Shares::ipo_shares(),
-            bank_pool: Shares::bank_pool_shares(),
+            bank_pool: Shares::empty_shares(),
             bank_amount: 8000,
         }
     }

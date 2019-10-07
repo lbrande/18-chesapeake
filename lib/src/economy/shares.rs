@@ -6,7 +6,6 @@ use std::collections::{HashMap, HashSet};
 pub struct Shares {
     shares: HashMap<PubComId, u32>,
     president_shares: HashSet<PubComId>,
-    kind: Kind,
 }
 
 impl Shares {
@@ -20,16 +19,18 @@ impl Shares {
         Self {
             shares,
             president_shares,
-            kind: Kind::Ipo,
         }
     }
 
-    pub(crate) fn bank_pool_shares() -> Self {
-        Self::with_kind(Kind::BankPool)
-    }
-
-    pub(crate) fn player_shares() -> Self {
-        Self::with_kind(Kind::Player)
+    pub(crate) fn empty_shares() -> Self {
+        let mut shares = HashMap::new();
+        for &id in PubComId::values() {
+            shares.insert(id, 0);
+        }
+        Self {
+            shares,
+            president_shares: HashSet::new(),
+        }
     }
 
     /// Returns the shares of this `Shares`
@@ -41,23 +42,4 @@ impl Shares {
     pub fn president_shares(&self) -> &HashSet<PubComId> {
         &self.president_shares
     }
-
-    fn with_kind(kind: Kind) -> Self {
-        let mut shares = HashMap::new();
-        for &id in PubComId::values() {
-            shares.insert(id, 0);
-        }
-        Self {
-            shares,
-            president_shares: HashSet::new(),
-            kind,
-        }
-    }
-}
-
-#[derive(Clone, Debug)]
-enum Kind {
-    Ipo,
-    BankPool,
-    Player,
 }
