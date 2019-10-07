@@ -1,22 +1,23 @@
+use crate::economy::Player;
 use crate::PubComId;
 use std::collections::HashSet;
 
 /// Represents a stock round
 #[derive(Clone, Debug)]
 pub struct StockRound {
+    players: Vec<Player>,
+    priority_player: usize,
     sell_allowed: bool,
-    last_actor: usize,
-    player_count: usize,
     pub_coms_sold: HashSet<(usize, PubComId)>,
     passes: usize,
 }
 
 impl StockRound {
-    pub(crate) fn new(sell_allowed: bool, last_actor: usize, player_count: usize) -> Self {
+    pub(crate) fn new(players: Vec<Player>, priority_player: usize, sell_allowed: bool) -> Self {
         StockRound {
+            players,
+            priority_player,
             sell_allowed,
-            last_actor,
-            player_count,
             pub_coms_sold: HashSet::new(),
             passes: 0,
         }
@@ -25,7 +26,7 @@ impl StockRound {
     /// Returns whether everyone has passed
     pub(crate) fn pass(&mut self) -> bool {
         self.passes += 1;
-        if self.passes == self.player_count {
+        if self.passes == self.players.len() {
             self.passes = 0;
             true
         } else {
