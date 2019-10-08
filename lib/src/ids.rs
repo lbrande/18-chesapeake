@@ -332,10 +332,10 @@ impl RoundId {
         round
     }
 
-    /// Returns the players and the priority player id
-    pub(crate) fn state(self) -> (Vec<Player>, usize) {
+    /// Returns the players and the priority player
+    pub(crate) fn end(self) -> (Vec<Player>, usize) {
         match self {
-            RoundId::PrivAuction(priv_auction) => priv_auction.state(),
+            RoundId::PrivAuction(priv_auction) => priv_auction.end(),
             _ => panic!("TODO"),
         }
     }

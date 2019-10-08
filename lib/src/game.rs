@@ -109,7 +109,7 @@ impl Game {
     }
 
     fn enter_first_stock_round(&mut self) {
-        let (players, priority_player) = self.round.take().state();
+        let (players, priority_player) = self.round.take().end();
         self.round = RoundId::StockRound(StockRound::new(players, priority_player, false));
     }
 

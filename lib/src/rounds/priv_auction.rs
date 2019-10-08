@@ -82,8 +82,8 @@ impl PrivAuction {
         self.current_if_pass_allowed().is_some()
     }
 
-    /// Returns the players and the priority player id
-    pub(crate) fn state(self) -> (Vec<Player>, usize) {
+    /// Returns the players and the priority player
+    pub(crate) fn end(self) -> (Vec<Player>, usize) {
         (self.players, self.priority_player)
     }
 
@@ -112,17 +112,17 @@ impl PrivAuction {
     }
 
     fn advance_current_player(&mut self) {
-        if let Some(player_id) = self.next_player_in_auction() {
-            self.current_player = player_id;
+        if let Some(player) = self.next_player_in_auction() {
+            self.current_player = player;
         } else {
             self.current_player = (self.current_player + 1) % self.players.len();
         }
     }
 
     fn next_player_to_bid(&self, private: PrivComId) -> Option<usize> {
-        if let Some(player_id) = self.player_id_with_max_bid(private) {
+        if let Some(player) = self.player_with_max_bid(private) {
             for i in 1..self.players.len() {
-                if self.bids[(player_id + i) % self.players.len()]
+                if self.bids[(player + i) % self.players.len()]
                     .get(&private)
                     .is_some()
                 {
@@ -167,11 +167,11 @@ impl PrivAuction {
         if let Some(current_priv) = self.current_if_pass_allowed() {
             self.passes = 0;
             self.bids[self.current_player].remove(&current_priv);
-            if let Some((player_id, amount)) = self.only_bid(current_priv) {
+            if let Some((player, amount)) = self.only_bid(current_priv) {
                 self.current_priv = PrivComId::values()
                     .find(|p| p.cost() > current_priv.cost())
                     .cloned();
-                self.players[player_id].buy_priv(current_priv, amount);
+                self.players[player].buy_priv(current_priv, amount);
             }
             self.advance_current_player();
         }
@@ -215,18 +215,18 @@ impl PrivAuction {
         max_bid
     }
 
-    fn player_id_with_max_bid(&self, private: PrivComId) -> Option<usize> {
-        let mut player_id = None;
+    fn player_with_max_bid(&self, private: PrivComId) -> Option<usize> {
+        let mut player = None;
         let mut max_bid = private.cost();
         for i in 0..self.players.len() {
             if let Some(&bid) = self.bids[i].get(&private) {
                 if bid > max_bid {
-                    player_id = Some(i);
+                    player = Some(i);
                     max_bid = bid;
                 }
             }
         }
-        player_id
+        player
     }
 
     fn only_bid(&self, private: PrivComId) -> Option<(usize, u32)> {
