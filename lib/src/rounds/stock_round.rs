@@ -15,4 +15,8 @@ impl StockRound {
             pub_coms_sold: HashSet::new(),
         }
     }
+
+    pub fn sell_allowed(&self) -> bool {
+        self.sell_allowed()
+    }
 }

@@ -309,8 +309,6 @@ pub enum PhaseId {
 #[derive(Debug)]
 /// Represents a game round
 pub enum RoundId {
-    /// No round
-    None,
     /// Private auction
     PrivAuction(PrivAuction),
     /// Stock round
