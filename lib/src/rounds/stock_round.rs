@@ -25,7 +25,9 @@ impl StockRound {
         }
     }
 
-    pub(crate) fn sell_allowed(&mut self, pub_com: PubComId, count: u32) {}
+    pub(crate) fn sell_allowed(&mut self, pub_com: PubComId, count: u32) -> bool {
+        self.sell_allowed && self.players[self.current_player].shares().count(pub_com) >= count
+    }
 
     /// Returns whether everyone has passed
     pub(crate) fn pass(&mut self) -> bool {

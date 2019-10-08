@@ -61,7 +61,7 @@ impl PrivAuction {
             self.priority_player = (self.current_player + 1) % self.players.len();
             self.advance_current_player();
         }
-        self.is_done()
+        self.done()
     }
 
     pub(crate) fn buy_allowed(&self) -> bool {
@@ -87,7 +87,7 @@ impl PrivAuction {
         (self.players, self.priority_player)
     }
 
-    fn is_done(&self) -> bool {
+    fn done(&self) -> bool {
         self.current_priv.is_none()
     }
 
@@ -175,7 +175,7 @@ impl PrivAuction {
             }
             self.advance_current_player();
         }
-        self.is_done()
+        self.done()
     }
 
     fn current_if_pass_allowed(&self) -> Option<PrivComId> {

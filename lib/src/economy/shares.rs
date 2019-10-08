@@ -33,13 +33,13 @@ impl Shares {
         }
     }
 
-    /// Returns the shares of this `Shares`
-    pub fn shares(&self) -> &HashMap<PubComId, u32> {
-        &self.shares
+    /// Returns the number of shares of a `PubComId` in this `Shares`.
+    pub fn count(&self, pub_com: PubComId) -> u32 {
+        *self.shares.get(&pub_com).unwrap()
     }
 
-    /// Returns the president shares of this `Shares`
-    pub fn president_shares(&self) -> &HashSet<PubComId> {
-        &self.president_shares
+    /// Returns whether the president share of a `PubComId` is in this `Shares`.
+    pub fn president(&self, pub_com: PubComId) -> bool {
+        self.president_shares.contains(&pub_com)
     }
 }

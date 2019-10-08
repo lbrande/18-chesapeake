@@ -41,4 +41,9 @@ impl Player {
     pub fn capital(&self) -> u32 {
         self.capital
     }
+
+    /// Returns the shares of this `Player`
+    pub fn shares(&self) -> Shares {
+        self.shares
+    }
 }
