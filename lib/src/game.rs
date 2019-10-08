@@ -5,12 +5,17 @@ use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs;
 
+static ACTION_FORBIDDEN: &str = "action is forbidden";
+
 /// Represents a game
 #[derive(Debug)]
 pub struct Game {
-    phase: PhaseId,
     round: RoundId,
+    phase: PhaseId,
+    players: Vec<Player>,
+    current_player: usize,
     priority_player: usize,
+    passes: usize,
     pub_coms: HashMap<PubComId, PubCom>,
     map: Map,
     tile_set: TileSet,
@@ -33,9 +38,12 @@ impl Game {
             players.push(Player::new(id, 2400 / player_count as u32));
         }
         Self {
+            round: RoundId::PrivAuction(PrivAuction::new(player_count)),
             phase: PhaseId::Phase2,
-            round: RoundId::PrivAuction(PrivAuction::new(players)),
+            players,
+            current_player: 0,
             priority_player: 0,
+            passes: 0,
             pub_coms: HashMap::new(),
             map: Map::from_toml(&read_toml_file("map")),
             tile_set: TileSet::from_toml(&read_toml_file("tile_set")),
@@ -48,75 +56,178 @@ impl Game {
         }
     }
 
-    /// Places a bid on a private company
-    pub fn place_bid(&mut self, private: PrivComId, amount: u32) {
-        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
-            priv_auction.place_bid(private, amount);
+    fn enter_first_stock_round(&mut self) {
+        self.round = RoundId::StockRound(StockRound::new(false));
+        self.current_player = self.priority_player;
+    }
+
+    fn operate_priv_coms(players: &mut Vec<Player>) {
+        for player in players {
+            player.operate_priv_coms();
         }
     }
 
-    /// Returns whether the specified bid is allowed
-    pub fn bid_allowed(&self, private: PrivComId, amount: u32) -> bool {
-        if let RoundId::PrivAuction(priv_auction) = &self.round {
-            priv_auction.bid_allowed(private, amount)
-        } else {
-            false
-        }
-    }
-
-    /// Buys the current (cheapest) private company
-    pub fn buy_current(&mut self) {
-        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
-            if priv_auction.buy_current() {
-                self.enter_first_stock_round();
-            }
-        }
-    }
-
-    /// Returns whether buying the current (cheapest) private company is allowed
-    pub fn buy_allowed(&self) -> bool {
-        if let RoundId::PrivAuction(priv_auction) = &self.round {
-            priv_auction.buy_allowed()
-        } else {
-            false
-        }
-    }
-
-    /// Passes
-    pub fn pass(&mut self) {
+    fn advance_current_player(&mut self) {
         match &mut self.round {
-            RoundId::StockRound(stock_round) => {
-                stock_round.pass();
+            RoundId::StockRound(_) => {
+                self.current_player = (self.current_player + 1) % self.players.len();
             }
             RoundId::PrivAuction(priv_auction) => {
-                if priv_auction.pass() {
-                    self.enter_first_stock_round();
+                if let Some(player) = priv_auction.next_player_in_auction() {
+                    self.current_player = player;
+                } else {
+                    self.current_player = (self.current_player + 1) % self.players.len();
                 }
             }
             _ => (),
         }
     }
+}
 
-    /// Returns whether passing is allowed
-    pub fn pass_allowed(&self) -> bool {
-        if let RoundId::PrivAuction(priv_auction) = &self.round {
-            priv_auction.pass_allowed()
-        } else if let RoundId::StockRound(_) = self.round {
-            true
+/// Returns whether the specified bid is allowed
+pub fn bid_allowed(game: &Game, private: PrivComId, amount: u32) -> bool {
+    if let RoundId::PrivAuction(priv_auction) = &game.round {
+        if let Some(current_priv) = priv_auction.current_priv() {
+            priv_auction.can_afford_bid(&game.players[game.current_player], private, amount)
+                && amount + 5 >= priv_auction.max_bid(private)
+                && ((private == current_priv
+                    && priv_auction
+                        .bids(&game.players[game.current_player])
+                        .get(&private)
+                        .map_or(false, |&a| a != priv_auction.max_bid(private)))
+                    || (private != current_priv
+                        && current_priv.cost() == priv_auction.max_bid(current_priv)
+                        && !priv_auction
+                            .bids(&game.players[game.current_player])
+                            .contains_key(&private)))
         } else {
             false
         }
+    } else {
+        false
     }
+}
 
-    fn enter_first_stock_round(&mut self) {
-        let (players, priority_player) = self.round.take().end();
-        self.round = RoundId::StockRound(StockRound::new(players, priority_player, false));
+/// Places a bid on a private company
+pub fn place_bid(game: &mut Game, private: PrivComId, amount: u32) {
+    if !bid_allowed(game, private, amount) {
+        panic!(ACTION_FORBIDDEN);
     }
+    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
+        game.passes = 0;
+        priv_auction.insert_bid(&game.players[game.current_player], private, amount);
+    }
+    game.advance_current_player();
+}
 
-    pub(crate) fn operate_priv_coms(players: &mut Vec<Player>) {
-        for player in players {
-            player.operate_priv_coms();
+/// Returns whether buying the current (cheapest) private company is allowed
+pub fn buy_allowed(game: &Game) -> bool {
+    if let RoundId::PrivAuction(priv_auction) = &game.round {
+        priv_auction
+            .current_if_buy_allowed(&game.players[game.current_player])
+            .is_some()
+    } else {
+        false
+    }
+}
+
+/// Buys the current (cheapest) private company
+pub fn buy_current(game: &mut Game) {
+    if !buy_allowed(game) {
+        panic!(ACTION_FORBIDDEN);
+    }
+    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
+        if let Some(current_priv) =
+            priv_auction.current_if_buy_allowed(&game.players[game.current_player])
+        {
+            game.passes = 0;
+            priv_auction.advance_current_priv();
+            game.players[game.current_player].buy_priv(current_priv, current_priv.cost());
+            game.priority_player = (game.current_player + 1) % game.players.len();
+            if priv_auction.done() {
+                game.enter_first_stock_round();
+                return;
+            }
         }
+    }
+    game.advance_current_player();
+}
+
+/// Returns whether passing is allowed
+pub fn pass_allowed(game: &Game) -> bool {
+    match &game.round {
+        RoundId::StockRound(_) => true,
+        RoundId::PrivAuction(priv_auction) => priv_auction
+            .current_if_pass_allowed(&game.players[game.current_player])
+            .is_some(),
+        _ => false,
+    }
+}
+
+/// Passes
+pub fn pass(game: &mut Game) {
+    if !pass_allowed(game) {
+        panic!(ACTION_FORBIDDEN);
+    }
+    match &mut game.round {
+        RoundId::StockRound(_) => {
+            game.passes += 1;
+            if game.passes == game.players.len() {
+                game.passes = 0;
+                // TODO
+            }
+        }
+        RoundId::PrivAuction(priv_auction) => {
+            if priv_auction.in_auction() {
+                if pass_in_auction(game) {
+                    game.enter_first_stock_round();
+                    return;
+                }
+            } else {
+                pass_on_current_priv(game);
+            }
+        }
+        _ => unreachable!(),
+    }
+    game.advance_current_player();
+}
+
+fn pass_on_current_priv(game: &mut Game) {
+    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
+        if let Some(current_priv) =
+            priv_auction.current_if_pass_allowed(&game.players[game.current_player])
+        {
+            game.passes += 1;
+            if game.passes == game.players.len() {
+                game.passes = 0;
+                if let PrivComId::DAndR(cost) = current_priv {
+                    priv_auction.reduce_d_and_r_price(cost);
+                } else {
+                    Game::operate_priv_coms(&mut game.players);
+                }
+            }
+        }
+    } else {
+        panic!(ACTION_FORBIDDEN);
+    }
+}
+
+/// Returns whether the private auction is done
+fn pass_in_auction(game: &mut Game) -> bool {
+    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
+        if let Some(current_priv) =
+            priv_auction.current_if_pass_allowed(&game.players[game.current_player])
+        {
+            game.passes = 0;
+            priv_auction.remove_bid(&game.players[game.current_player], current_priv);
+            if let Some((player, amount)) = priv_auction.only_bid(current_priv) {
+                priv_auction.advance_current_priv();
+                game.players[player].buy_priv(current_priv, amount);
+            }
+        }
+        priv_auction.done()
+    } else {
+        panic!(ACTION_FORBIDDEN);
     }
 }
 

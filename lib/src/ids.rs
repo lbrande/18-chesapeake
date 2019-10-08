@@ -1,7 +1,5 @@
-use crate::economy::Player;
 use crate::rounds::{PrivAuction, StockRound};
 use std::fmt::{Display, Formatter, Result as FmtResult};
-use std::mem;
 use std::slice::Iter;
 use std::str::FromStr;
 
@@ -323,20 +321,4 @@ pub enum RoundId {
     OperatingRound2,
     /// Third operating round
     OperatingRound3,
-}
-
-impl RoundId {
-    pub(crate) fn take(&mut self) -> Self {
-        let mut round = RoundId::None;
-        mem::swap(self, &mut round);
-        round
-    }
-
-    /// Returns the players and the priority player
-    pub(crate) fn end(self) -> (Vec<Player>, usize) {
-        match self {
-            RoundId::PrivAuction(priv_auction) => priv_auction.end(),
-            _ => panic!("TODO"),
-        }
-    }
 }

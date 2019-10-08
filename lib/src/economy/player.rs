@@ -43,7 +43,7 @@ impl Player {
     }
 
     /// Returns the shares of this `Player`
-    pub fn shares(&self) -> Shares {
-        self.shares
+    pub fn shares(&self) -> &Shares {
+        &self.shares
     }
 }

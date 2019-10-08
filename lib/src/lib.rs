@@ -13,7 +13,7 @@ mod ids;
 pub mod rounds;
 mod train_set;
 
-pub use game::Game;
+pub use game::*;
 pub use ids::*;
 pub use train_set::TrainSet;
 
