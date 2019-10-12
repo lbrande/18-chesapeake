@@ -117,6 +117,7 @@ pub fn bid_priv(game: &mut Game, private: PrivComId, amount: u32) {
     if let RoundId::PrivAuction(priv_auction) = &mut game.round {
         game.passes = 0;
         priv_auction.insert_bid(&game.players[game.current_player], private, amount);
+        priv_auction.zero_non_max_bids(private);
     }
     game.advance_current_player();
 }

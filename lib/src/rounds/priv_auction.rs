@@ -127,6 +127,14 @@ impl PrivAuction {
         self.bids[player.id()].remove(&private);
     }
 
+    pub(crate) fn zero_non_max_bids(&mut self, private: PrivComId) {
+        for bids in &mut self.bids {
+            if bids.contains_key(&private) {
+                bids.insert(private, 0);
+            }
+        }
+    }
+
     pub(crate) fn advance_current_priv(&mut self) {
         if let Some(current_priv) = self.current_priv {
             self.current_priv = PrivComId::values()
