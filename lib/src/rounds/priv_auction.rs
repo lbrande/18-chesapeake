@@ -5,39 +5,39 @@ use std::collections::HashMap;
 #[derive(Debug)]
 /// Represents the auction for private companies
 pub struct PrivAuction {
-    current_priv: Option<PrivComId>,
+    current: Option<PrivComId>,
     bids: Vec<HashMap<PrivComId, u32>>,
 }
 
 impl PrivAuction {
     pub(crate) fn new(player_count: usize) -> Self {
         PrivAuction {
-            current_priv: Some(PrivComId::DAndR(20)),
+            current: Some(PrivComId::DAndR(20)),
             bids: vec![HashMap::new(); player_count],
         }
     }
 
     pub(crate) fn done(&self) -> bool {
-        self.current_priv.is_none()
+        self.current.is_none()
     }
 
     pub(crate) fn in_auction(&self) -> bool {
-        if let Some(current_priv) = self.current_priv {
-            current_priv.cost() != self.max_bid(current_priv)
+        if let Some(current) = self.current {
+            current.cost() != self.max_bid(current)
         } else {
             false
         }
     }
 
     pub(crate) fn next_player_in_auction(&self) -> Option<usize> {
-        if let Some(current_priv) = self.current_priv {
-            if current_priv.cost() == self.max_bid(current_priv) {
+        if let Some(current) = self.current {
+            if current.cost() == self.max_bid(current) {
                 None
             } else {
-                if let Some(player) = self.player_with_max_bid(current_priv) {
+                if let Some(player) = self.player_with_max_bid(current) {
                     for i in 1..self.bids.len() {
                         if self.bids[(player + i) % self.bids.len()]
-                            .get(&current_priv)
+                            .get(&current)
                             .is_some()
                         {
                             return Some(i);
@@ -52,11 +52,11 @@ impl PrivAuction {
     }
 
     pub(crate) fn current_if_buy_allowed(&self, player: &Player) -> Option<PrivComId> {
-        if let Some(current_priv) = self.current_priv {
-            if current_priv.cost() == self.max_bid(current_priv)
-                && self.can_afford_bid(player, current_priv, current_priv.cost())
+        if let Some(current) = self.current {
+            if current.cost() == self.max_bid(current)
+                && self.can_afford_bid(player, current, current.cost())
             {
-                Some(current_priv)
+                Some(current)
             } else {
                 None
             }
@@ -66,12 +66,12 @@ impl PrivAuction {
     }
 
     pub(crate) fn current_if_pass_allowed(&self, player: &Player) -> Option<PrivComId> {
-        if let Some(current_priv) = self.current_priv {
-            if current_priv.cost() != 0
-                && (current_priv.cost() == self.max_bid(current_priv)
-                    || self.bids[player.id()].contains_key(&current_priv))
+        if let Some(current) = self.current {
+            if current.cost() != 0
+                && (current.cost() == self.max_bid(current)
+                    || self.bids[player.id()].contains_key(&current))
             {
-                Some(current_priv)
+                Some(current)
             } else {
                 None
             }
@@ -127,7 +127,7 @@ impl PrivAuction {
         self.bids[player.id()].remove(&private);
     }
 
-    pub(crate) fn zero_non_max_bids(&mut self, private: PrivComId) {
+    pub(crate) fn reset_non_max_bids(&mut self, private: PrivComId) {
         for bids in &mut self.bids {
             if bids.contains_key(&private) {
                 bids.insert(private, 0);
@@ -135,21 +135,21 @@ impl PrivAuction {
         }
     }
 
-    pub(crate) fn advance_current_priv(&mut self) {
-        if let Some(current_priv) = self.current_priv {
-            self.current_priv = PrivComId::values()
-                .find(|p| p.cost() > current_priv.cost())
+    pub(crate) fn advance_current(&mut self) {
+        if let Some(current) = self.current {
+            self.current = PrivComId::values()
+                .find(|p| p.cost() > current.cost())
                 .cloned();
         }
     }
 
     pub(crate) fn reduce_d_and_r_price(&mut self, cost: u32) {
-        self.current_priv = Some(PrivComId::DAndR(cost - 5));
+        self.current = Some(PrivComId::DAndR(cost - 5));
     }
 
     /// Returns the current private company of this `PrivAuction`
-    pub fn current_priv(&self) -> Option<PrivComId> {
-        self.current_priv
+    pub fn current(&self) -> Option<PrivComId> {
+        self.current
     }
 
     fn player_with_max_bid(&self, private: PrivComId) -> Option<usize> {

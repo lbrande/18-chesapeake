@@ -88,7 +88,7 @@ impl Game {
 pub fn bid_priv_allowed(game: &Game, private: PrivComId, amount: u32) -> bool {
     if let RoundId::PrivAuction(priv_auction) = &game.round {
         let current_player = &game.players[game.current_player];
-        if let Some(current_priv) = priv_auction.current_priv() {
+        if let Some(current_priv) = priv_auction.current() {
             priv_auction.can_afford_bid(&current_player, private, amount)
                 && amount + 5 >= priv_auction.max_bid(private)
                 && ((private == current_priv
@@ -117,7 +117,7 @@ pub fn bid_priv(game: &mut Game, private: PrivComId, amount: u32) {
     if let RoundId::PrivAuction(priv_auction) = &mut game.round {
         game.passes = 0;
         priv_auction.insert_bid(&game.players[game.current_player], private, amount);
-        priv_auction.zero_non_max_bids(private);
+        priv_auction.reset_non_max_bids(private);
     }
     game.advance_current_player();
 }
@@ -142,7 +142,7 @@ pub fn buy_priv(game: &mut Game) {
         let current_player = &mut game.players[game.current_player];
         if let Some(current_priv) = priv_auction.current_if_buy_allowed(&current_player) {
             game.passes = 0;
-            priv_auction.advance_current_priv();
+            priv_auction.advance_current();
             current_player.buy_priv(current_priv, current_priv.cost());
             game.priority_player = (game.current_player + 1) % game.players.len();
             if priv_auction.done() {
@@ -185,7 +185,7 @@ pub fn pass(game: &mut Game) {
                     game.passes = 0;
                     priv_auction.remove_bid(&current_player, current_priv);
                     if let Some((player, amount)) = priv_auction.only_bid(current_priv) {
-                        priv_auction.advance_current_priv();
+                        priv_auction.advance_current();
                         game.players[player].buy_priv(current_priv, amount);
                         if priv_auction.done() {
                             game.enter_first_stock_round();

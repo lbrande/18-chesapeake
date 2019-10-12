@@ -16,7 +16,8 @@ impl StockRound {
         }
     }
 
+    /// Returns whether selling shares is allowed in this `StockRound`
     pub fn sell_allowed(&self) -> bool {
-        self.sell_allowed()
+        self.sell_allowed
     }
 }
