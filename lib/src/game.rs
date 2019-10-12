@@ -179,56 +179,35 @@ pub fn pass(game: &mut Game) {
             }
         }
         RoundId::PrivAuction(priv_auction) => {
-            if priv_auction.in_auction() {
-                if pass_in_auction(game) {
-                    game.enter_first_stock_round();
-                    return;
+            let current_player = &game.players[game.current_player];
+            if let Some(current_priv) = priv_auction.current_if_pass_allowed(&current_player) {
+                if priv_auction.in_auction() {
+                    game.passes = 0;
+                    priv_auction.remove_bid(&current_player, current_priv);
+                    if let Some((player, amount)) = priv_auction.only_bid(current_priv) {
+                        priv_auction.advance_current_priv();
+                        game.players[player].buy_priv(current_priv, amount);
+                        if priv_auction.done() {
+                            game.enter_first_stock_round();
+                            return;
+                        }
+                    }
+                } else {
+                    game.passes += 1;
+                    if game.passes == game.players.len() {
+                        game.passes = 0;
+                        if let PrivComId::DAndR(cost) = current_priv {
+                            priv_auction.reduce_d_and_r_price(cost);
+                        } else {
+                            Game::operate_priv_coms(&mut game.players);
+                        }
+                    }
                 }
-            } else {
-                pass_on_current_priv(game);
             }
         }
         _ => unreachable!(),
     }
     game.advance_current_player();
-}
-
-fn pass_on_current_priv(game: &mut Game) {
-    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
-        if let Some(current_priv) =
-            priv_auction.current_if_pass_allowed(&game.players[game.current_player])
-        {
-            game.passes += 1;
-            if game.passes == game.players.len() {
-                game.passes = 0;
-                if let PrivComId::DAndR(cost) = current_priv {
-                    priv_auction.reduce_d_and_r_price(cost);
-                } else {
-                    Game::operate_priv_coms(&mut game.players);
-                }
-            }
-        }
-    } else {
-        panic!(ACTION_FORBIDDEN);
-    }
-}
-
-/// Returns whether the private auction is done
-fn pass_in_auction(game: &mut Game) -> bool {
-    if let RoundId::PrivAuction(priv_auction) = &mut game.round {
-        let current_player = &game.players[game.current_player];
-        if let Some(current_priv) = priv_auction.current_if_pass_allowed(&current_player) {
-            game.passes = 0;
-            priv_auction.remove_bid(&current_player, current_priv);
-            if let Some((player, amount)) = priv_auction.only_bid(current_priv) {
-                priv_auction.advance_current_priv();
-                game.players[player].buy_priv(current_priv, amount);
-            }
-        }
-        priv_auction.done()
-    } else {
-        panic!(ACTION_FORBIDDEN);
-    }
 }
 
 /// Returns whether selling shares is allowed
@@ -237,9 +216,15 @@ pub fn sell_shares_allowed(game: &Game, pub_com: PubComId, count: u32) -> bool {
         let current_player = &game.players[game.current_player];
         let owned_count = current_player.shares().count(pub_com);
         let president = current_player.shares().president(pub_com);
-        (!president || owned_count - count >= 2 || game.players.iter().any(|p| {
-                            p.id() != current_player.id() && p.shares().count(pub_com) >= 2
-                        })) && count + game.bank_pool.count(pub_com) <= 5 && owned_count >= count && stock_round.sell_allowed()
+        (!president
+            || owned_count - count >= 2
+            || game
+                .players
+                .iter()
+                .any(|p| p.id() != current_player.id() && p.shares().count(pub_com) >= 2))
+            && count + game.bank_pool.count(pub_com) <= 5
+            && owned_count >= count
+            && stock_round.sell_allowed()
     } else {
         false
     }
