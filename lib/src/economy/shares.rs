@@ -33,6 +33,18 @@ impl Shares {
         }
     }
 
+    pub(crate) fn remove_shares(&mut self, pub_com: PubComId, count: u32) {
+        self.shares.entry(pub_com).and_modify(|c| *c -= count);
+    }
+
+    pub(crate) fn add_president(&mut self, pub_com: PubComId) {
+        self.president_shares.insert(pub_com);
+    }
+
+    pub(crate) fn remove_president(&mut self, pub_com: PubComId) {
+        self.president_shares.remove(&pub_com);
+    }
+
     /// Returns the number of shares of `pub_com` in this `Shares`.
     pub fn count(&self, pub_com: PubComId) -> u32 {
         *self.shares.get(&pub_com).unwrap()

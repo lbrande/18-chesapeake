@@ -212,8 +212,10 @@ impl Game {
             panic!(ACTION_FORBIDDEN);
         }
         if let RoundId::StockRound(stock_round) = &mut self.round {
-            stock_round.insert_pub_com_sold(pub_com, &self.players[self.current_player]);
-        //TODO
+            let current_player = &mut self.players[self.current_player];
+            stock_round.insert_pub_com_sold(pub_com, current_player);
+            current_player.shares_mut().remove_shares(pub_com, count);
+            self.update_president(pub_com);
         } else {
             unreachable!();
         }
@@ -245,6 +247,36 @@ impl Game {
             }
             _ => (),
         }
+    }
+
+    fn update_president(&mut self, pub_com: PubComId) {
+        if let Some(president) = self.president(pub_com) {
+            let mut new_president = president;
+            let mut max_shares = self.players[president].shares().count(pub_com);
+            for i in 1..self.players.len() {
+                let j = (president.id() + i) % self.players.len();
+                let shares = self.players[j]
+                    .shares()
+                    .count(pub_com);
+                if shares > max_shares {
+                    new_president = j;
+                    max_shares = shares;
+                }
+            }
+            if new_president != president {
+                self.players[president].shares_mut().remove_president(pub_com);
+                self.players[new_president].shares_mut().add_president(pub_com);
+            }
+        }
+    }
+
+    fn president(&self, pub_com: PubComId) -> Option<usize> {
+        for player in &self.players {
+            if player.shares().president(pub_com) {
+                return Some(player.id());
+            }
+        }
+        None
     }
 }
 

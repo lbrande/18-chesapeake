@@ -32,6 +32,10 @@ impl Player {
         }
     }
 
+    pub(crate) fn shares_mut(&mut self) -> &mut Shares {
+        &mut self.shares
+    }
+
     /// Returns the id of this `Player`
     pub fn id(&self) -> usize {
         self.id
