@@ -1,3 +1,4 @@
+use crate::economy::Player;
 use crate::PubComId;
 use std::collections::HashSet;
 
@@ -5,7 +6,7 @@ use std::collections::HashSet;
 #[derive(Clone, Debug)]
 pub struct StockRound {
     sell_allowed: bool,
-    pub_coms_sold: HashSet<(usize, PubComId)>,
+    pub_coms_sold: HashSet<(PubComId, usize)>,
 }
 
 impl StockRound {
@@ -14,6 +15,10 @@ impl StockRound {
             sell_allowed,
             pub_coms_sold: HashSet::new(),
         }
+    }
+
+    pub(crate) fn insert_pub_com_sold(&mut self, pub_com: PubComId, player: &Player) {
+        self.pub_coms_sold.insert((pub_com, player.id()));
     }
 
     /// Returns whether selling shares is allowed in this `StockRound`

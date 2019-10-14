@@ -56,7 +56,7 @@ impl Game {
         }
     }
 
-    /// Returns whether placing a bid on a private company is allowed
+    /// Returns whether placing a bid of `amount` on `private` is allowed
     pub fn bid_priv_allowed(&self, private: PrivComId, amount: u32) -> bool {
         if let RoundId::PrivAuction(priv_auction) = &self.round {
             let current_player = &self.players[self.current_player];
@@ -81,7 +81,7 @@ impl Game {
         }
     }
 
-    /// Places a bid on a private company
+    /// Places a bid of `amount` on `private`
     pub fn bid_priv(&mut self, private: PrivComId, amount: u32) {
         if !self.bid_priv_allowed(private, amount) {
             panic!(ACTION_FORBIDDEN);
@@ -90,12 +90,14 @@ impl Game {
             self.passes = 0;
             priv_auction.insert_bid(&self.players[self.current_player], private, amount);
             priv_auction.reset_non_max_bids(private);
+        } else {
+            unreachable!();
         }
         self.advance_current_player();
     }
 
-    /// Returns whether buying a private company is allowed
-    pub fn buy_priv_allowed(&self) -> bool {
+    /// Returns whether buying the cheapest private company is allowed
+    pub fn buy_cheapest_priv_allowed(&self) -> bool {
         if let RoundId::PrivAuction(priv_auction) = &self.round {
             priv_auction
                 .current_if_buy_allowed(&self.players[self.current_player])
@@ -105,9 +107,9 @@ impl Game {
         }
     }
 
-    /// Buys a private company
-    pub fn buy_priv(&mut self) {
-        if !self.buy_priv_allowed() {
+    /// Buys the cheapest private company
+    pub fn buy_cheapest_priv(&mut self) {
+        if !self.buy_cheapest_priv_allowed() {
             panic!(ACTION_FORBIDDEN);
         }
         if let RoundId::PrivAuction(priv_auction) = &mut self.round {
@@ -122,6 +124,8 @@ impl Game {
                     return;
                 }
             }
+        } else {
+            unreachable!();
         }
         self.advance_current_player();
     }
@@ -182,7 +186,7 @@ impl Game {
         self.advance_current_player();
     }
 
-    /// Returns whether selling shares is allowed
+    /// Returns whether selling `count` shares of `pub_com` is allowed
     pub fn sell_shares_allowed(&self, pub_com: PubComId, count: u32) -> bool {
         if let RoundId::StockRound(stock_round) = &self.round {
             let current_player = &self.players[self.current_player];
@@ -200,6 +204,20 @@ impl Game {
         } else {
             false
         }
+    }
+
+    /// Sells `count` shares of `pub_com`
+    pub fn sell_shares(&mut self, pub_com: PubComId, count: u32) {
+        if !self.sell_shares_allowed(pub_com, count) {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::StockRound(stock_round) = &mut self.round {
+            stock_round.insert_pub_com_sold(pub_com, &self.players[self.current_player]);
+        //TODO
+        } else {
+            unreachable!();
+        }
+        self.advance_current_player();
     }
 
     fn enter_first_stock_round(&mut self) {

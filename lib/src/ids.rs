@@ -227,7 +227,7 @@ pub enum TerrainId {
 }
 
 impl TerrainId {
-    /// Returns the cost of laying `Tile`s on this `TerrainId`
+    /// Returns the cost of laying tiles on this `TerrainId`
     pub fn cost(self) -> u32 {
         match self {
             TerrainId::Plain => 0,

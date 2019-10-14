@@ -80,10 +80,6 @@ impl PrivAuction {
         }
     }
 
-    pub(crate) fn bids(&self, player: &Player) -> &HashMap<PrivComId, u32> {
-        &self.bids[player.id()]
-    }
-
     pub(crate) fn max_bid(&self, private: PrivComId) -> u32 {
         let mut max_bid = private.cost();
         for bids in &self.bids {
@@ -150,6 +146,11 @@ impl PrivAuction {
     /// Returns the current private company of this `PrivAuction`
     pub fn current(&self) -> Option<PrivComId> {
         self.current
+    }
+
+    /// Returns the bids of `player` in this `PrivAuction`
+    pub fn bids(&self, player: &Player) -> &HashMap<PrivComId, u32> {
+        &self.bids[player.id()]
     }
 
     fn player_with_max_bid(&self, private: PrivComId) -> Option<usize> {
