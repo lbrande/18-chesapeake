@@ -200,6 +200,7 @@ impl Game {
                     .any(|p| p.id() != current_player.id() && p.shares().count(pub_com) >= 2))
                 && count + self.bank_pool.count(pub_com) <= 5
                 && owned_count >= count
+                && self.stock_chart.value(pub_com).is_some()
                 && stock_round.sell_allowed()
         } else {
             false
