@@ -10,7 +10,7 @@ static VALUE_TYPEERROR: &str = "value is not of type Integer";
 /// Represents the stock chart for a game
 #[derive(Clone, Debug)]
 pub struct StockChart {
-    values: Vec<Vec<(i32)>>,
+    values: Vec<Vec<(u32)>>,
     tokens: HashMap<PubComId, (usize, usize, usize)>,
 }
 
@@ -23,7 +23,7 @@ impl StockChart {
             let mut row = Vec::new();
             for value in row_toml.as_array().expect(VALUES_TYPEERROR) {
                 let value = value.as_integer().expect(VALUE_TYPEERROR);
-                row.push(value as i32);
+                row.push(value as u32);
             }
             values.push(row);
         }
@@ -31,5 +31,10 @@ impl StockChart {
             values,
             tokens: HashMap::new(),
         }
+    }
+
+    /// Returns the share value of `pub_com` on this `StockChart`
+    pub fn value(&self, pub_com: PubComId) -> Option<u32> {
+        self.tokens.get(&pub_com).and_then(|&(x, y, _)| Some(self.values[x][y]))
     }
 }

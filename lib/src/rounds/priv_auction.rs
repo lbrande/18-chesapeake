@@ -129,7 +129,7 @@ impl PrivAuction {
         self.current = Some(PrivComId::DAndR(cost - 5));
     }
 
-    /// Returns the current private company of this `PrivAuction`
+    /// Returns the current private company in this `PrivAuction`
     pub fn current(&self) -> Option<PrivComId> {
         self.current
     }
