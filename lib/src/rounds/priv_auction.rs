@@ -125,8 +125,8 @@ impl PrivAuction {
         }
     }
 
-    pub(crate) fn reduce_d_and_r_price(&mut self, cost: u32) {
-        self.current = Some(PrivComId::DAndR(cost - 5));
+    pub(crate) fn reduce_d_and_r_price(&mut self, old_cost: u32) {
+        self.current = Some(PrivComId::DAndR(old_cost - 5));
     }
 
     /// Returns the current private company in this `PrivAuction`

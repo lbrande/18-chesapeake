@@ -33,8 +33,23 @@ impl StockChart {
         }
     }
 
+    pub(crate) fn move_down(&mut self, pub_com: PubComId, count: usize) {
+        if let Some(&(row, column, z)) = self.tokens.get(&pub_com) {
+            self.tokens.insert(
+                pub_com,
+                (
+                    row,
+                    usize::min(row + count, self.values[column].len() - 1),
+                    z,
+                ),
+            );
+        }
+    }
+
     /// Returns the share value of `pub_com` on this `StockChart`
     pub fn value(&self, pub_com: PubComId) -> Option<u32> {
-        self.tokens.get(&pub_com).and_then(|&(x, y, _)| Some(self.values[x][y]))
+        self.tokens
+            .get(&pub_com)
+            .and_then(|&(x, y, _)| Some(self.values[x][y]))
     }
 }

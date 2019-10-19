@@ -217,6 +217,7 @@ impl Game {
             stock_round.insert_pub_com_sold(pub_com, current_player);
             current_player.shares_mut().remove_shares(pub_com, count);
             self.update_president(pub_com);
+            self.stock_chart.move_down(pub_com, count as usize);
         } else {
             unreachable!();
         }
