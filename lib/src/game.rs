@@ -119,7 +119,7 @@ impl Game {
                 priv_auction.advance_current();
                 current_player.buy_priv(current_priv, current_priv.cost());
                 self.priority_player = (self.current_player + 1) % self.players.len();
-                if priv_auction.done() {
+                if priv_auction.current().is_none() {
                     self.enter_first_stock_round();
                     return;
                 }
@@ -157,13 +157,13 @@ impl Game {
             RoundId::PrivAuction(priv_auction) => {
                 let current_player = &self.players[self.current_player];
                 if let Some(current_priv) = priv_auction.current_if_pass_allowed(&current_player) {
-                    if priv_auction.in_auction() {
+                    if priv_auction.max_bid(current_priv) != current_priv.cost() {
                         self.passes = 0;
                         priv_auction.remove_bid(&current_player, current_priv);
                         if let Some((player, amount)) = priv_auction.only_bid(current_priv) {
                             priv_auction.advance_current();
                             self.players[player].buy_priv(current_priv, amount);
-                            if priv_auction.done() {
+                            if priv_auction.current().is_none() {
                                 self.enter_first_stock_round();
                                 return;
                             }

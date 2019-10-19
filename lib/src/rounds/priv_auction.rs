@@ -17,18 +17,6 @@ impl PrivAuction {
         }
     }
 
-    pub(crate) fn done(&self) -> bool {
-        self.current.is_none()
-    }
-
-    pub(crate) fn in_auction(&self) -> bool {
-        if let Some(current) = self.current {
-            current.cost() != self.max_bid(current)
-        } else {
-            false
-        }
-    }
-
     pub(crate) fn next_player_in_auction(&self) -> Option<usize> {
         if let Some(current) = self.current {
             if current.cost() == self.max_bid(current) {
