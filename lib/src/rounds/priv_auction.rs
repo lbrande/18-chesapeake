@@ -37,10 +37,7 @@ impl PrivAuction {
                 if let Some(player) = self.player_with_max_bid(current) {
                     for i in 1..self.bids.len() {
                         let j = (player + i) % self.bids.len();
-                        if self.bids[j]
-                            .get(&current)
-                            .is_some()
-                        {
+                        if self.bids[j].get(&current).is_some() {
                             return Some(j);
                         }
                     }

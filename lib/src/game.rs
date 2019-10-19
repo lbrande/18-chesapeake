@@ -254,18 +254,20 @@ impl Game {
             let mut new_president = president;
             let mut max_shares = self.players[president].shares().count(pub_com);
             for i in 1..self.players.len() {
-                let j = (president.id() + i) % self.players.len();
-                let shares = self.players[j]
-                    .shares()
-                    .count(pub_com);
+                let j = (president + i) % self.players.len();
+                let shares = self.players[j].shares().count(pub_com);
                 if shares > max_shares {
                     new_president = j;
                     max_shares = shares;
                 }
             }
             if new_president != president {
-                self.players[president].shares_mut().remove_president(pub_com);
-                self.players[new_president].shares_mut().add_president(pub_com);
+                self.players[president]
+                    .shares_mut()
+                    .remove_president(pub_com);
+                self.players[new_president]
+                    .shares_mut()
+                    .add_president(pub_com);
             }
         }
     }
