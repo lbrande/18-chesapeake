@@ -35,14 +35,8 @@ impl StockChart {
 
     pub(crate) fn move_down(&mut self, pub_com: PubComId, count: usize) {
         if let Some(&(row, column, z)) = self.tokens.get(&pub_com) {
-            self.tokens.insert(
-                pub_com,
-                (
-                    row,
-                    usize::min(row + count, self.values[column].len() - 1),
-                    z,
-                ),
-            );
+            let new_column = usize::min(row + count, self.values[column].len() - 1);
+            self.tokens.insert(pub_com, (row, new_column, z));
         }
     }
 
