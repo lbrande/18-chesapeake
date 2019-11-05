@@ -270,6 +270,7 @@ impl Game {
         self.advance_current_player();
     }
 
+    /// Returns the certificate limit of this `Game`
     pub fn certificate_limit(&self) -> u32 {
         match self.players.len() {
             2 => 20,
