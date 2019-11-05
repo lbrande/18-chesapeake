@@ -216,6 +216,7 @@ impl Game {
             let current_player = &mut self.players[self.current_player];
             stock_round.insert_pub_com_sold(pub_com, current_player);
             current_player.shares_mut().remove_shares(pub_com, count);
+            self.bank_pool.add_shares(pub_com, count);
             current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);
             self.stock_chart.move_down(pub_com, count as usize);
             self.update_president(pub_com);

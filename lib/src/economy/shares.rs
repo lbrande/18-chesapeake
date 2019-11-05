@@ -33,6 +33,10 @@ impl Shares {
         }
     }
 
+    pub(crate) fn add_shares(&mut self, pub_com: PubComId, count: u32) {
+        self.shares.entry(pub_com).and_modify(|c| *c += count);
+    }
+
     pub(crate) fn remove_shares(&mut self, pub_com: PubComId, count: u32) {
         self.shares.entry(pub_com).and_modify(|c| *c -= count);
     }
