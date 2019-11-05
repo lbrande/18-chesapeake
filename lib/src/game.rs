@@ -23,8 +23,7 @@ pub struct Game {
     stock_chart: StockChart,
     par_track: ParTrack,
     ipo: Shares,
-    bank_pool: Shares,
-    bank_amount: u32,
+    pool: Shares,
 }
 
 impl Game {
@@ -51,8 +50,7 @@ impl Game {
             stock_chart: StockChart::from_toml(&read_toml_file("stock_chart")),
             par_track: ParTrack::from_toml(&read_toml_file("par_track")),
             ipo: Shares::ipo_shares(),
-            bank_pool: Shares::empty_shares(),
-            bank_amount: 8000,
+            pool: Shares::empty_shares(),
         }
     }
 
@@ -186,12 +184,47 @@ impl Game {
         self.advance_current_player();
     }
 
-    /// Returns whether buying a share  of `pub_com` from ipo is allowed
+    /// Returns whether buying a share of `pub_com` from the IPO is allowed
     pub fn buy_ipo_share_allowed(&self, pub_com: PubComId) -> bool {
         if let RoundId::StockRound(_) = &self.round {
-            self.par_track.value(pub_com).is_some()
-                && self.ipo.count(pub_com) > 0
-                && self.players[self.current_player].shares().count(pub_com) < 6
+            let current_player = &self.players[self.current_player];
+            if let Some(par) = self.par_track.value(pub_com) {
+                self.ipo.count(pub_com) > 0
+                    && current_player.shares().count(pub_com) < 6
+                    && self.certificate_count(current_player) < self.certificate_limit()
+                    && current_player.capital() >= par
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
+    /// Returns whether buying a share of `pub_com` from the bank pool is allowed
+    pub fn buy_pool_share_allowed(&self, pub_com: PubComId) -> bool {
+        if let RoundId::StockRound(_) = &self.round {
+            let current_player = &self.players[self.current_player];
+            if let Some(value) = self.stock_chart.value(pub_com) {
+                self.pool.count(pub_com) > 0
+                    && current_player.shares().count(pub_com) < 6
+                    && self.certificate_count(current_player) < self.certificate_limit()
+                    && current_player.capital() >= value
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
+    /// Returns whether buying the precidency of `pub_com`, setting the par value to `par` is allowed
+    pub fn buy_presidency_allowed(&self, pub_com: PubComId, par: u32) -> bool {
+        if let RoundId::StockRound(_) = &self.round {
+            let current_player = &self.players[self.current_player];
+            self.ipo.contains_presidency(pub_com)
+                && self.certificate_count(current_player) < self.certificate_limit()
+                && current_player.capital() >= par * 2
         } else {
             false
         }
@@ -202,14 +235,14 @@ impl Game {
         if let RoundId::StockRound(stock_round) = &self.round {
             let current_player = &self.players[self.current_player];
             let owned_count = current_player.shares().count(pub_com);
-            let president = current_player.shares().president(pub_com);
+            let president = current_player.shares().contains_presidency(pub_com);
             (!president
                 || owned_count - count >= 2
                 || self
                     .players
                     .iter()
                     .any(|p| p.id() != current_player.id() && p.shares().count(pub_com) >= 2))
-                && count + self.bank_pool.count(pub_com) <= 5
+                && count + self.pool.count(pub_com) <= 5
                 && owned_count >= count
                 && self.stock_chart.value(pub_com).is_some()
                 && stock_round.sell_allowed()
@@ -227,7 +260,7 @@ impl Game {
             let current_player = &mut self.players[self.current_player];
             stock_round.insert_pub_com_sold(pub_com, current_player);
             current_player.shares_mut().remove_shares(pub_com, count);
-            self.bank_pool.add_shares(pub_com, count);
+            self.pool.add_shares(pub_com, count);
             current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);
             self.stock_chart.move_down(pub_com, count as usize);
             self.update_president(pub_com);
@@ -235,6 +268,17 @@ impl Game {
             unreachable!();
         }
         self.advance_current_player();
+    }
+
+    pub fn certificate_limit(&self) -> u32 {
+        match self.players.len() {
+            2 => 20,
+            3 => 20,
+            4 => 16,
+            5 => 13,
+            6 => 11,
+            _ => unreachable!(),
+        }
     }
 
     fn enter_first_stock_round(&mut self) {
@@ -279,21 +323,37 @@ impl Game {
             if new_president != president {
                 self.players[president]
                     .shares_mut()
-                    .remove_president(pub_com);
+                    .remove_presidency(pub_com);
                 self.players[new_president]
                     .shares_mut()
-                    .add_president(pub_com);
+                    .add_presidency(pub_com);
             }
         }
     }
 
     fn president(&self, pub_com: PubComId) -> Option<usize> {
         for player in &self.players {
-            if player.shares().president(pub_com) {
+            if player.shares().contains_presidency(pub_com) {
                 return Some(player.id());
             }
         }
         None
+    }
+
+    fn certificate_count(&self, player: &Player) -> u32 {
+        PubComId::values()
+            .map(|&p| {
+                if let Some(value) = self.stock_chart.value(p) {
+                    if value < 60 {
+                        0
+                    } else {
+                        player.shares().count(p)
+                    }
+                } else {
+                    player.shares().count(p)
+                }
+            })
+            .sum()
     }
 }
 
