@@ -186,6 +186,17 @@ impl Game {
         self.advance_current_player();
     }
 
+    /// Returns whether buying a share  of `pub_com` from ipo is allowed
+    pub fn buy_ipo_share_allowed(&self, pub_com: PubComId) -> bool {
+        if let RoundId::StockRound(_) = &self.round {
+            self.par_track.value(pub_com).is_some()
+                && self.ipo.count(pub_com) > 0
+                && self.players[self.current_player].shares().count(pub_com) < 6
+        } else {
+            false
+        }
+    }
+
     /// Returns whether selling `count` shares of `pub_com` is allowed
     pub fn sell_shares_allowed(&self, pub_com: PubComId, count: u32) -> bool {
         if let RoundId::StockRound(stock_round) = &self.round {

@@ -28,4 +28,11 @@ impl ParTrack {
             tokens: HashMap::new(),
         }
     }
+
+    /// Returns the par value of `pub_com` on this `ParTrack`
+    pub fn value(&self, pub_com: PubComId) -> Option<u32> {
+        self.tokens
+            .get(&pub_com)
+            .and_then(|&x| Some(self.values[x]))
+    }
 }
