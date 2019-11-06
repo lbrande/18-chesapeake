@@ -243,6 +243,26 @@ impl Game {
         }
     }
 
+    /// Buys a share of `pub_com` from the bank pool
+    pub fn buy_pool_share(&mut self, pub_com: PubComId) {
+        if !self.buy_pool_share_allowed(pub_com) {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::StockRound(_) = &self.round {
+            if let Some(value) = self.stock_chart.value(pub_com) {
+                let current_player = &mut self.players[self.current_player];
+                self.pool.remove_shares(pub_com, 1);
+                current_player.shares_mut().add_shares(pub_com, 1);
+                current_player.remove_capital(value);
+                self.update_president(pub_com);
+            } else {
+                unreachable!();
+            }
+        } else {
+            unreachable!();
+        }
+    }
+
     /// Returns whether buying the precidency of `pub_com`, setting the par value to `par` is allowed
     pub fn buy_presidency_allowed(&self, pub_com: PubComId, par: u32) -> bool {
         if let RoundId::StockRound(_) = &self.round {
