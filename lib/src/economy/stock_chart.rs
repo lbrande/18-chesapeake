@@ -33,6 +33,10 @@ impl StockChart {
         }
     }
 
+    pub(crate) fn add_token(&mut self, pub_com: PubComId, par: u32) {
+        self.tokens.insert(pub_com, self.par_to_position(par));
+    }
+
     pub(crate) fn move_down(&mut self, pub_com: PubComId, count: usize) {
         if let Some(&(row, column, z)) = self.tokens.get(&pub_com) {
             let new_column = usize::min(row + count, self.values[column].len() - 1);
@@ -45,5 +49,21 @@ impl StockChart {
         self.tokens
             .get(&pub_com)
             .and_then(|&(x, y, _)| Some(self.values[x][y]))
+    }
+
+    fn token_count_at_position(&self, row: usize, column: usize) -> usize {
+        self.tokens
+            .values()
+            .filter(|(r, c, _)| *r == row && *c == column)
+            .count()
+    }
+
+    fn par_to_position(&self, par: u32) -> (usize, usize, usize) {
+        match par {
+            70 => (4, 2, self.token_count_at_position(4, 2)),
+            80 => (3, 3, self.token_count_at_position(3, 3)),
+            95 => (2, 4, self.token_count_at_position(2, 4)),
+            _ => unreachable!(),
+        }
     }
 }

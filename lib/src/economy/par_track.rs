@@ -29,10 +29,28 @@ impl ParTrack {
         }
     }
 
+    pub(crate) fn add_token(&mut self, pub_com: PubComId, par: u32) {
+        self.tokens.insert(pub_com, self.par_to_position(par));
+    }
+
     /// Returns the par value of `pub_com` on this `ParTrack`
     pub fn value(&self, pub_com: PubComId) -> Option<u32> {
         self.tokens
             .get(&pub_com)
             .and_then(|&x| Some(self.values[x]))
+    }
+
+    /// Returns the par values of this `ParTrack`
+    pub fn values(&self) -> Vec<u32> {
+        self.values.clone()
+    }
+
+    fn par_to_position(&self, par: u32) -> usize {
+        match par {
+            70 => 0,
+            80 => 1,
+            95 => 2,
+            _ => unreachable!(),
+        }
     }
 }

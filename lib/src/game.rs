@@ -267,11 +267,31 @@ impl Game {
     pub fn buy_presidency_allowed(&self, pub_com: PubComId, par: u32) -> bool {
         if let RoundId::StockRound(_) = &self.round {
             let current_player = &self.players[self.current_player];
-            self.ipo.contains_presidency(pub_com)
+            self.par_track.values().contains(&par)
+                && self.ipo.contains_presidency(pub_com)
                 && self.certificate_count(current_player) < self.certificate_limit()
                 && current_player.capital() >= par * 2
         } else {
             false
+        }
+    }
+
+    /// Buys the precidency of `pub_com`, setting the par value to `par`
+    pub fn buy_presidency(&mut self, pub_com: PubComId, par: u32) {
+        if !self.buy_presidency_allowed(pub_com, par) {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::StockRound(_) = &self.round {
+            let current_player = &mut self.players[self.current_player];
+            self.pool.remove_shares(pub_com, 2);
+            self.pool.remove_presidency(pub_com);
+            current_player.shares_mut().add_shares(pub_com, 2);
+            current_player.shares_mut().add_presidency(pub_com);
+            current_player.remove_capital(par * 2);
+            self.par_track.add_token(pub_com, par);
+            self.stock_chart.add_token(pub_com, par);
+        } else {
+            unreachable!();
         }
     }
 
