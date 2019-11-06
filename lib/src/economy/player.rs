@@ -40,6 +40,10 @@ impl Player {
         self.capital += capital;
     }
 
+    pub(crate) fn remove_capital(&mut self, capital: u32) {
+        self.capital -= capital;
+    }
+
     /// Returns the id of this `Player`
     pub fn id(&self) -> usize {
         self.id

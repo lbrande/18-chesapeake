@@ -57,8 +57,8 @@ impl Game {
     /// Returns whether placing a bid of `amount` on `private` is allowed
     pub fn bid_priv_allowed(&self, private: PrivComId, amount: u32) -> bool {
         if let RoundId::PrivAuction(priv_auction) = &self.round {
-            let current_player = &self.players[self.current_player];
             if let Some(current_priv) = priv_auction.current() {
+                let current_player = &self.players[self.current_player];
                 priv_auction.can_afford_bid(&current_player, private, amount)
                     && amount + 5 >= priv_auction.max_bid(private)
                     && ((private == current_priv
@@ -131,7 +131,7 @@ impl Game {
     /// Returns whether passing is allowed
     pub fn pass_allowed(&self) -> bool {
         match &self.round {
-            RoundId::StockRound(_) => true,
+            RoundId::StockRound(stock_round) => !stock_round.action_performed(),
             RoundId::PrivAuction(priv_auction) => priv_auction
                 .current_if_pass_allowed(&self.players[self.current_player])
                 .is_some(),
@@ -187,8 +187,8 @@ impl Game {
     /// Returns whether buying a share of `pub_com` from the IPO is allowed
     pub fn buy_ipo_share_allowed(&self, pub_com: PubComId) -> bool {
         if let RoundId::StockRound(_) = &self.round {
-            let current_player = &self.players[self.current_player];
             if let Some(par) = self.par_track.value(pub_com) {
+                let current_player = &self.players[self.current_player];
                 self.ipo.count(pub_com) > 0
                     && current_player.shares().count(pub_com) < 6
                     && self.certificate_count(current_player) < self.certificate_limit()
@@ -201,11 +201,32 @@ impl Game {
         }
     }
 
+    /// Buys a share of `pub_com` from the IPO
+    pub fn buy_ipo_share(&mut self, pub_com: PubComId) {
+        if !self.buy_ipo_share_allowed(pub_com) {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::StockRound(_) = &self.round {
+            if let Some(par) = self.par_track.value(pub_com) {
+                let current_player = &mut self.players[self.current_player];
+                self.ipo.remove_shares(pub_com, 1);
+                current_player.shares_mut().add_shares(pub_com, 1);
+                current_player.remove_capital(par);
+                self.update_president(pub_com);
+            } else {
+                unreachable!();
+            }
+        } else {
+            unreachable!();
+        }
+        self.end_turn();
+    }
+
     /// Returns whether buying a share of `pub_com` from the bank pool is allowed
     pub fn buy_pool_share_allowed(&self, pub_com: PubComId) -> bool {
         if let RoundId::StockRound(_) = &self.round {
-            let current_player = &self.players[self.current_player];
             if let Some(value) = self.stock_chart.value(pub_com) {
+                let current_player = &self.players[self.current_player];
                 self.pool.count(pub_com) > 0
                     && current_player.shares().count(pub_com) < 6
                     && self.certificate_count(current_player) < self.certificate_limit()
@@ -228,6 +249,28 @@ impl Game {
         } else {
             false
         }
+    }
+
+    /// Returns whether ending the turn is allowed
+    pub fn end_turn_allowed(&self) -> bool {
+        if let RoundId::StockRound(stock_round) = &self.round {
+            stock_round.action_performed()
+        } else {
+            false
+        }
+    }
+
+    /// Ends the turn
+    pub fn end_turn(&mut self) {
+        if !self.end_turn_allowed() {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::StockRound(stock_round) = &mut self.round {
+            stock_round.toggle_action_performed();
+        } else {
+            unreachable!();
+        }
+        self.advance_current_player();
     }
 
     /// Returns whether selling `count` shares of `pub_com` is allowed
@@ -259,6 +302,7 @@ impl Game {
         if let RoundId::StockRound(stock_round) = &mut self.round {
             let current_player = &mut self.players[self.current_player];
             stock_round.insert_pub_com_sold(pub_com, current_player);
+            stock_round.toggle_action_performed();
             current_player.shares_mut().remove_shares(pub_com, count);
             self.pool.add_shares(pub_com, count);
             current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);
