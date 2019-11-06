@@ -131,7 +131,11 @@ impl Game {
     /// Returns whether passing is allowed
     pub fn pass_allowed(&self) -> bool {
         match &self.round {
-            RoundId::StockRound(stock_round) => !stock_round.action_performed(),
+            RoundId::StockRound(stock_round) => {
+                !stock_round.action_performed()
+                    && self.certificate_count(&self.players[self.current_player])
+                        <= self.certificate_limit()
+            }
             RoundId::PrivAuction(priv_auction) => priv_auction
                 .current_if_pass_allowed(&self.players[self.current_player])
                 .is_some(),
@@ -255,6 +259,8 @@ impl Game {
     pub fn end_turn_allowed(&self) -> bool {
         if let RoundId::StockRound(stock_round) = &self.round {
             stock_round.action_performed()
+                && self.certificate_count(&self.players[self.current_player])
+                    <= self.certificate_limit()
         } else {
             false
         }
