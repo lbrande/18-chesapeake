@@ -379,7 +379,8 @@ impl Game {
 
     fn enter_first_operating_round(&mut self) {
         self.round =
-            RoundId::OperatingRound(OperatingRound::new(self.phase.operating_round_count() - 1))
+            RoundId::OperatingRound(OperatingRound::new(self.phase.operating_round_count() - 1));
+        self.operate_priv_coms();
     }
 
     fn operate_priv_coms(&mut self) {
