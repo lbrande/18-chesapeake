@@ -23,8 +23,12 @@ impl StockRound {
         self.pub_coms_sold.insert((pub_com, player.id()));
     }
 
-    pub(crate) fn toggle_action_performed(&mut self) {
-        self.action_performed = !self.action_performed;
+    pub(crate) fn set_action_performed(&mut self) {
+        self.action_performed = true;
+    }
+
+    pub(crate) fn unset_action_performed(&mut self) {
+        self.action_performed = false;
     }
 
     /// Returns whether the current player has performed an action

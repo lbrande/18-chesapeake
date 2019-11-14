@@ -312,7 +312,7 @@ impl Game {
             panic!(ACTION_FORBIDDEN);
         }
         if let RoundId::StockRound(stock_round) = &mut self.round {
-            stock_round.toggle_action_performed();
+            stock_round.unset_action_performed();
         } else {
             unreachable!();
         }
@@ -348,7 +348,7 @@ impl Game {
         if let RoundId::StockRound(stock_round) = &mut self.round {
             let current_player = &mut self.players[self.current_player];
             stock_round.insert_pub_com_sold(pub_com, current_player);
-            stock_round.toggle_action_performed();
+            stock_round.set_action_performed();
             current_player.shares_mut().remove_shares(pub_com, count);
             self.pool.add_shares(pub_com, count);
             current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);
