@@ -1,4 +1,4 @@
-use crate::rounds::{PrivAuction, StockRound};
+use crate::rounds::{OperatingRound, PrivAuction, StockRound};
 use std::fmt::{Display, Formatter, Result as FmtResult};
 use std::slice::Iter;
 use std::str::FromStr;
@@ -313,10 +313,6 @@ pub enum RoundId {
     PrivAuction(PrivAuction),
     /// Stock round
     StockRound(StockRound),
-    /// First operating round
-    OperatingRound1,
-    /// Second operating round
-    OperatingRound2,
-    /// Third operating round
-    OperatingRound3,
+    /// Operating round
+    OperatingRound(OperatingRound),
 }

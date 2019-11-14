@@ -1,6 +1,6 @@
 use crate::economy::{ParTrack, Player, PubCom, Shares, StockChart};
 use crate::geography::{Map, TileSet};
-use crate::rounds::{PrivAuction, StockRound};
+use crate::rounds::{OperatingRound, PrivAuction, StockRound};
 use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
 use std::fs;
@@ -375,6 +375,10 @@ impl Game {
     fn enter_first_stock_round(&mut self) {
         self.round = RoundId::StockRound(StockRound::new(false));
         self.current_player = self.priority_player;
+    }
+
+    fn enter_operating_round(&mut self) {
+        self.round = RoundId::OperatingRound(OperatingRound::new())
     }
 
     fn operate_priv_coms(&mut self) {
