@@ -306,6 +306,17 @@ pub enum PhaseId {
     PhaseD,
 }
 
+impl PhaseId {
+    /// Returns the operating round count of this `PhaseId`
+    pub fn operating_round_count(&self) -> u32 {
+        match self {
+            PhaseId::Phase2 => 1,
+            PhaseId::Phase3 | PhaseId::Phase4 => 2,
+            _ => 3,
+        }
+    }
+}
+
 #[derive(Debug)]
 /// Represents a game round
 pub enum RoundId {

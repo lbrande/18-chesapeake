@@ -377,8 +377,9 @@ impl Game {
         self.current_player = self.priority_player;
     }
 
-    fn enter_operating_round(&mut self) {
-        self.round = RoundId::OperatingRound(OperatingRound::new())
+    fn enter_first_operating_round(&mut self) {
+        self.round =
+            RoundId::OperatingRound(OperatingRound::new(self.phase.operating_round_count() - 1))
     }
 
     fn operate_priv_coms(&mut self) {
