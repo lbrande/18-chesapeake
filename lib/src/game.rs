@@ -153,7 +153,7 @@ impl Game {
                 self.passes += 1;
                 if self.passes == self.players.len() {
                     self.passes = 0;
-                    // TODO
+                    self.enter_first_operating_round();
                 }
             }
             RoundId::PrivAuction(priv_auction) => {
@@ -261,6 +261,7 @@ impl Game {
         } else {
             unreachable!();
         }
+        self.end_turn();
     }
 
     /// Returns whether buying the precidency of `pub_com`, setting the par value to `par` is allowed
@@ -293,6 +294,7 @@ impl Game {
         } else {
             unreachable!();
         }
+        self.end_turn();
     }
 
     /// Returns whether ending the turn is allowed
@@ -313,6 +315,7 @@ impl Game {
         }
         if let RoundId::StockRound(stock_round) = &mut self.round {
             stock_round.unset_action_performed();
+            self.passes = 0;
         } else {
             unreachable!();
         }
@@ -347,8 +350,8 @@ impl Game {
         }
         if let RoundId::StockRound(stock_round) = &mut self.round {
             let current_player = &mut self.players[self.current_player];
-            stock_round.insert_pub_com_sold(pub_com, current_player);
             stock_round.set_action_performed();
+            stock_round.insert_pub_com_sold(pub_com, current_player);
             current_player.shares_mut().remove_shares(pub_com, count);
             self.pool.add_shares(pub_com, count);
             current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);

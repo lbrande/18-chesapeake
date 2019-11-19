@@ -12,7 +12,7 @@ impl OperatingRound {
     pub(crate) fn new(operating_rounds_left: u32) -> Self {
         OperatingRound {
             operating_rounds_left,
-            pub_coms_to_operate: PubComId::values().copied().collect()
+            pub_coms_to_operate: PubComId::values().copied().collect(),
         }
     }
 }
