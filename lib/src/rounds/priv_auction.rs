@@ -119,8 +119,7 @@ impl PrivAuction {
 
     pub(crate) fn advance_current(&mut self) {
         if let Some(current) = self.current {
-            self.current = PrivComId::values()
-                .find(|p| p.cost() > current.cost());
+            self.current = PrivComId::values().find(|p| p.cost() > current.cost());
         }
     }
 

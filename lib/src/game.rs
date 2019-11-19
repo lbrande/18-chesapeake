@@ -363,6 +363,11 @@ impl Game {
         self.advance_current_player();
     }
 
+    /// Returns the current player of this game
+    pub fn current_player(&self) -> usize {
+        self.current_player
+    }
+
     /// Returns the certificate limit of this `Game`
     pub fn certificate_limit(&self) -> u32 {
         match self.players.len() {
