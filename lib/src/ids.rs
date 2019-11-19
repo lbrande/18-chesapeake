@@ -1,5 +1,6 @@
 use crate::rounds::{OperatingRound, PrivAuction, StockRound};
 use std::fmt::{Display, Formatter, Result as FmtResult};
+use std::iter::Copied;
 use std::slice::Iter;
 use std::str::FromStr;
 
@@ -70,7 +71,7 @@ impl PubComId {
     }
 
     /// Returns an iterator over the possible values of `PubComId`
-    pub fn values() -> Iter<'static, Self> {
+    pub fn values() -> Copied<Iter<'static, Self>> {
         [
             PubComId::BAndO,
             PubComId::CAndA,
@@ -82,6 +83,7 @@ impl PubComId {
             PubComId::SRR,
         ]
         .iter()
+        .copied()
     }
 }
 
@@ -173,7 +175,7 @@ impl PrivComId {
     }
 
     /// Returns an iterator over the possible values of `PrivComId`
-    pub fn values() -> Iter<'static, Self> {
+    pub fn values() -> Copied<Iter<'static, Self>> {
         [
             PrivComId::DAndR(20),
             PrivComId::CToP,
@@ -183,6 +185,7 @@ impl PrivComId {
             PrivComId::CV,
         ]
         .iter()
+        .copied()
     }
 }
 

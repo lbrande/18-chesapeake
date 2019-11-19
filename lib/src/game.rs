@@ -3,7 +3,7 @@ use crate::geography::{Map, TileSet};
 use crate::rounds::{OperatingRound, PrivAuction, StockRound};
 use crate::{PhaseId, PrivComId, PubComId, RoundId, TrainSet};
 use std::collections::HashMap;
-use std::fs;
+use std::{fs, u32};
 
 static ACTION_FORBIDDEN: &str = "action is forbidden";
 
@@ -381,14 +381,32 @@ impl Game {
     }
 
     fn enter_first_operating_round(&mut self) {
-        self.round =
-            RoundId::OperatingRound(OperatingRound::new(self.phase.operating_round_count() - 1));
+        self.round = RoundId::OperatingRound(OperatingRound::new(
+            self.phase.operating_round_count() - 1,
+            PubComId::values()
+                .filter(|&p| self.stock_chart.value(p).is_some())
+                .collect(),
+        ));
         self.operate_priv_coms();
     }
 
     fn operate_priv_coms(&mut self) {
         for player in &mut self.players {
             player.operate_priv_coms();
+        }
+    }
+
+    fn current_pub_com(&self) -> PubComId {
+        if let RoundId::OperatingRound(operating_round) = self.round {
+            operating_round
+                .pub_coms_to_operate()
+                .iter()
+                .map(|&p| (p, self.stock_chart.value(p).unwrap()))
+                .max_by(|(_, v_1), (_, v_2)| u32::cmp(v_1, v_2))
+                .unwrap()
+                .0
+        } else {
+            panic!(ACTION_FORBIDDEN);
         }
     }
 
@@ -442,7 +460,7 @@ impl Game {
 
     fn certificate_count(&self, player: &Player) -> u32 {
         PubComId::values()
-            .map(|&p| {
+            .map(|p| {
                 if let Some(value) = self.stock_chart.value(p) {
                     if value < 60 {
                         0
