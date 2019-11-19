@@ -1,9 +1,11 @@
+use crate::OperatingPhaseId;
 use crate::PubComId;
 use std::collections::HashSet;
 
 /// Represents an operating round
 #[derive(Clone, Debug)]
 pub struct OperatingRound {
+    phase: OperatingPhaseId,
     operating_rounds_left: u32,
     pub_coms_to_operate: HashSet<PubComId>,
 }
@@ -11,6 +13,7 @@ pub struct OperatingRound {
 impl OperatingRound {
     pub(crate) fn new(operating_rounds_left: u32, pub_coms_to_operate: HashSet<PubComId>) -> Self {
         OperatingRound {
+            phase: OperatingPhaseId::LayTrack,
             operating_rounds_left,
             pub_coms_to_operate,
         }

@@ -388,6 +388,7 @@ impl Game {
                 .collect(),
         ));
         self.operate_priv_coms();
+        self.current_player = self.president(self.current_pub_com()).unwrap();
     }
 
     fn operate_priv_coms(&mut self) {
@@ -397,7 +398,7 @@ impl Game {
     }
 
     fn current_pub_com(&self) -> PubComId {
-        if let RoundId::OperatingRound(operating_round) = self.round {
+        if let RoundId::OperatingRound(operating_round) = &self.round {
             operating_round
                 .pub_coms_to_operate()
                 .iter()

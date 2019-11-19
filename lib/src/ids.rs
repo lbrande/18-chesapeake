@@ -330,3 +330,16 @@ pub enum RoundId {
     /// Operating round
     OperatingRound(OperatingRound),
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+/// Represents a game phase
+pub enum OperatingPhaseId {
+    /// Lay track phase
+    LayTrack,
+    /// Place station phase
+    PlaceStation,
+    /// Distribute earnings phase
+    DistributeEarnings,
+    /// Buy trains phase
+    BuyTrains,
+}

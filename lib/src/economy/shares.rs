@@ -12,7 +12,7 @@ impl Shares {
     pub(crate) fn ipo_shares() -> Self {
         let mut shares = HashMap::new();
         let mut presidencies = HashSet::new();
-        for &id in PubComId::values() {
+        for id in PubComId::values() {
             shares.insert(id, 8);
             presidencies.insert(id);
         }
@@ -24,7 +24,7 @@ impl Shares {
 
     pub(crate) fn empty_shares() -> Self {
         let mut shares = HashMap::new();
-        for &id in PubComId::values() {
+        for id in PubComId::values() {
             shares.insert(id, 0);
         }
         Self {
