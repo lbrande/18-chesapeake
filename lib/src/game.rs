@@ -217,6 +217,9 @@ impl Game {
                 current_player.shares_mut().add_shares(pub_com, 1);
                 current_player.remove_capital(par);
                 self.update_president(pub_com);
+                if self.ipo.count(pub_com) < 5 {
+                    self.pub_coms.insert(pub_com, PubCom::new(10 * par));
+                }
             } else {
                 unreachable!();
             }
