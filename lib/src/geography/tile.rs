@@ -42,4 +42,8 @@ impl Tile {
             upgrades,
         }
     }
+
+    pub(crate) fn rails(&self) -> &[Rail] {
+        &self.rails
+    }
 }

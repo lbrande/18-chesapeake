@@ -1,6 +1,5 @@
-use super::City;
-use super::Tile;
-use crate::{PrivComId, TerrainId};
+use super::{City, Stop, Tile};
+use crate::{PrivComId, PubComId, TerrainId};
 use toml::Value;
 
 static TERRAIN_TYPEERROR: &str = "terrain is not of type String";
@@ -44,6 +43,32 @@ impl Hex {
             content: tile.or(cities),
             private,
         }
+    }
+
+    /// Returns the public company that this `Hex` is home to, if any
+    pub fn home_to(&self) -> Option<PubComId> {
+        if let Some(content) = &self.content {
+            match content {
+                Content::Tile(tile) => {
+                    for rail in tile.rails() {
+                        if let Some(stop) = rail.stop() {
+                            match stop {
+                                Stop::City(city) => return city.home(),
+                                Stop::Location(location) => return location.home(),
+                            }
+                        }
+                    }
+                }
+                Content::Cities(cities) => {
+                    for city in cities {
+                        if let Some(home) = city.home() {
+                            return Some(home);
+                        }
+                    }
+                }
+            }
+        }
+        None
     }
 }
 

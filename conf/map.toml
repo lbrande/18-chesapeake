@@ -5,7 +5,7 @@ height = 7
 x = 0
 y = 1
 rails = [
-    {edges = [5], location = {values = [40, 50, 60, 80], name = "Pittsburgh", start = "P&LE"}}
+    {edges = [5], location = {values = [40, 50, 60, 80], name = "Pittsburgh", home = "P&LE"}}
 ]
 color = "Red"
 
@@ -95,7 +95,7 @@ x = 2
 y = 6
 terrain = "Mountain"
 cities = [
-    {value = 20, spots = 1, name = "Lynchburg", start = "N&W"}
+    {value = 20, spots = 1, name = "Lynchburg", home = "N&W"}
 ]
 
 [[hexes]]
@@ -180,7 +180,7 @@ y = 6
 x = 5
 y = 0
 cities = [
-    {value = 20, spots = 1, name = "Harrisburg", start = "PRR"}
+    {value = 20, spots = 1, name = "Harrisburg", home = "PRR"}
 ]
 
 [[hexes]]
@@ -256,7 +256,7 @@ terrain = "River"
 x = 6
 y = 6
 cities = [
-    {value = 20, spots = 1, name = "Richmond", start = "C&O"}
+    {value = 20, spots = 1, name = "Richmond", home = "C&O"}
 ]
 
 [[hexes]]
@@ -269,7 +269,7 @@ x = 7
 y = 1
 terrain = "River"
 cities = [
-    {value = 20, spots = 1, name = "Strasburg", start = "SRR"}
+    {value = 20, spots = 1, name = "Strasburg", home = "SRR"}
 ]
 
 [[hexes]]
@@ -277,7 +277,7 @@ x = 7
 y = 2
 terrain = "River"
 rails = [
-    {edges = [1], city = { value = 30, spots = 1, name = "Baltimore", start = "B&O"}},
+    {edges = [1], city = { value = 30, spots = 1, name = "Baltimore", home = "B&O"}},
     {edges = [4], city = { value = 30, spots = 1, name = "Baltimore"}}
 ]
 color = "Yellow"
@@ -325,7 +325,7 @@ color = "Gray"
 x = 9
 y = 0
 cities = [
-    {value = 20, spots = 1, name = "Allentown", start = "LV"}
+    {value = 20, spots = 1, name = "Allentown", home = "LV"}
 ]
 
 [[hexes]]
@@ -343,7 +343,7 @@ x = 9
 y = 2
 terrain = "River"
 cities = [
-    {value = 20, spots = 1, name = "Camden", start = "C&A"}
+    {value = 20, spots = 1, name = "Camden", home = "C&A"}
 ]
 
 [[hexes]]

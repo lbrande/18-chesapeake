@@ -31,4 +31,8 @@ impl Rail {
             stop: city.or(location),
         }
     }
+
+    pub(crate) fn stop(&self) -> &Option<Stop> {
+        &self.stop
+    }
 }

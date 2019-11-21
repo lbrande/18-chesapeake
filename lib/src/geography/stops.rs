@@ -29,7 +29,7 @@ pub struct City {
     stations: HashSet<PubComId>,
     spots: u32,
     name: Option<String>,
-    start: Option<PubComId>,
+    home: Option<PubComId>,
 }
 
 impl City {
@@ -47,8 +47,8 @@ impl City {
         let name = toml
             .get("name")
             .and_then(|n| Some(n.as_str().expect(NAME_TYPEERROR).to_string()));
-        let start = toml
-            .get("start")
+        let home = toml
+            .get("home")
             .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
             .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
         Self {
@@ -56,8 +56,12 @@ impl City {
             stations: HashSet::new(),
             spots,
             name,
-            start,
+            home,
         }
+    }
+
+    pub(crate) fn home(&self) -> Option<PubComId> {
+        self.home
     }
 }
 
@@ -67,7 +71,7 @@ pub struct Location {
     values: (u32, u32, u32, u32),
     stations: HashSet<PubComId>,
     name: String,
-    start: Option<PubComId>,
+    home: Option<PubComId>,
 }
 
 impl Location {
@@ -91,15 +95,19 @@ impl Location {
             .expect(NAME_MISSING)
             .as_str()
             .expect(NAME_TYPEERROR);
-        let start = toml
-            .get("start")
+        let home = toml
+            .get("home")
             .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
             .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
         Self {
             values,
             stations: HashSet::new(),
             name: name.to_string(),
-            start,
+            home,
         }
+    }
+
+    pub(crate) fn home(&self) -> Option<PubComId> {
+        self.home
     }
 }

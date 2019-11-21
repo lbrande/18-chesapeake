@@ -8,6 +8,7 @@ pub struct PubCom {
     capital: u32,
     trains: HashSet<TrainId>,
     priv_coms: HashSet<PrivComId>,
+    operated: bool,
 }
 
 impl PubCom {
@@ -16,6 +17,7 @@ impl PubCom {
             capital,
             trains: HashSet::new(),
             priv_coms: HashSet::new(),
+            operated: false,
         }
     }
 }

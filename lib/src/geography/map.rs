@@ -1,4 +1,5 @@
 use super::Hex;
+use crate::PubComId;
 use crate::INVALID_TOML;
 use toml::Value;
 
@@ -16,6 +17,8 @@ static Y_TYPEERROR: &str = "y is not of type Integer";
 /// Represents the map that a game is played on
 #[derive(Clone, Debug)]
 pub struct Map {
+    width: usize,
+    height: usize,
     hexes: Vec<Vec<Option<Hex>>>,
 }
 
@@ -51,6 +54,25 @@ impl Map {
             let hex = Hex::from_toml(value);
             hexes[x as usize][y as usize] = Some(hex);
         }
-        Self { hexes }
+        Self {
+            width: width as usize,
+            height: height as usize,
+            hexes,
+        }
+    }
+
+    pub(crate) fn place_home_station(pub_com: PubComId) {}
+
+    fn home_hex(&self, pub_com: PubComId) -> &Hex {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                if let Some(hex) = &self.hexes[x][y] {
+                    if hex.home_to() == Some(pub_com) {
+                        return hex;
+                    }
+                }
+            }
+        }
+        unreachable!()
     }
 }
