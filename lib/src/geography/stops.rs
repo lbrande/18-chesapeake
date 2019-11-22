@@ -12,6 +12,7 @@ static VALUES_TYPEERROR: &str = "values is not of type Array";
 static VALUES_LENERROR: &str = "values is not of length four";
 static NAME_MISSING: &str = "name is missing";
 static NAME_TYPEERROR: &str = "name is not of type String";
+static ACTION_FORBIDDEN: &str = "action is forbidden";
 
 /// Represents a train stop
 #[derive(Clone, Debug)]
@@ -27,7 +28,7 @@ pub enum Stop {
 pub struct City {
     value: u32,
     stations: HashSet<PubComId>,
-    spots: u32,
+    spots: usize,
     name: Option<String>,
     home: Option<PubComId>,
 }
@@ -43,7 +44,7 @@ impl City {
             .get("spots")
             .expect(SPOTS_MISSING)
             .as_integer()
-            .expect(SPOTS_TYPEERROR) as u32;
+            .expect(SPOTS_TYPEERROR) as usize;
         let name = toml
             .get("name")
             .and_then(|n| Some(n.as_str().expect(NAME_TYPEERROR).to_string()));
@@ -60,7 +61,16 @@ impl City {
         }
     }
 
-    pub(crate) fn home(&self) -> Option<PubComId> {
+    pub(crate) fn place_station(&mut self, pub_com: PubComId) {
+        if self.stations.len() < self.spots && !self.stations.contains(&pub_com) {
+            self.stations.insert(pub_com);
+        } else {
+            panic!(ACTION_FORBIDDEN);
+        }
+    }
+
+    /// Returns the public company that has its home in this `City`, if any
+    pub fn home(&self) -> Option<PubComId> {
         self.home
     }
 }
@@ -69,7 +79,7 @@ impl City {
 #[derive(Clone, Debug)]
 pub struct Location {
     values: (u32, u32, u32, u32),
-    stations: HashSet<PubComId>,
+    station: Option<PubComId>,
     name: String,
     home: Option<PubComId>,
 }
@@ -101,13 +111,22 @@ impl Location {
             .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
         Self {
             values,
-            stations: HashSet::new(),
+            station: None,
             name: name.to_string(),
             home,
         }
     }
 
-    pub(crate) fn home(&self) -> Option<PubComId> {
+    pub(crate) fn place_station(&mut self, pub_com: PubComId) {
+        if self.station.is_none() {
+            self.station = Some(pub_com);
+        } else {
+            panic!(ACTION_FORBIDDEN);
+        }
+    }
+
+    /// Returns the public company that has its home in this `Location`, if any
+    pub fn home(&self) -> Option<PubComId> {
         self.home
     }
 }

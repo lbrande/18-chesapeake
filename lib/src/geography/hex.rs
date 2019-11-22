@@ -45,16 +45,34 @@ impl Hex {
         }
     }
 
-    /// Returns the public company that this `Hex` is home to, if any
-    pub fn home_to(&self) -> Option<PubComId> {
+    pub(crate) fn place_station(&mut self, pub_com: PubComId, from_edge: u32) {
+        if let Some(content) = &mut self.content {
+            match content {
+                Content::Tile(tile) => {
+                    for rail in tile.rails_mut() {
+                        if rail.edges().contains(&from_edge) {
+                            rail.place_station(pub_com);
+                            break;
+                        }
+                    }
+                }
+                Content::Cities(cities) => {
+                    cities[0].place_station(pub_com);
+                }
+            }
+        }
+    }
+
+    /// Returns the public company that has its home in this `Hex` and its `from_edge`, if any
+    pub fn home(&self) -> Option<(PubComId, u32)> {
         if let Some(content) = &self.content {
             match content {
                 Content::Tile(tile) => {
                     for rail in tile.rails() {
                         if let Some(stop) = rail.stop() {
                             match stop {
-                                Stop::City(city) => return city.home(),
-                                Stop::Location(location) => return location.home(),
+                                Stop::City(city) => return city.home().map(|h| (h, rail.edges()[0])),
+                                Stop::Location(location) => return location.home().map(|h| (h, rail.edges()[0])),
                             }
                         }
                     }
@@ -62,7 +80,7 @@ impl Hex {
                 Content::Cities(cities) => {
                     for city in cities {
                         if let Some(home) = city.home() {
-                            return Some(home);
+                            return Some((home, 0));
                         }
                     }
                 }

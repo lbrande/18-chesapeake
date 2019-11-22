@@ -29,46 +29,46 @@ impl Map {
             .get("width")
             .expect(WIDTH_MISSING)
             .as_integer()
-            .expect(WIDTH_TYPEERROR);
+            .expect(WIDTH_TYPEERROR) as usize;
         let height = toml
             .get("height")
             .expect(HEIGHT_MISSING)
             .as_integer()
-            .expect(HEIGHT_TYPEERROR);
-        let mut hexes = vec![vec![None; height as usize]; width as usize];
+            .expect(HEIGHT_TYPEERROR) as usize;
+        let mut hexes = vec![vec![None; height]; width];
         let hexes_toml = toml.get("hexes").expect(HEXES_MISSING);
         for value in hexes_toml.as_array().expect(HEXES_TYPEERROR) {
             let x = value
                 .get("x")
                 .expect(X_MISSING)
                 .as_integer()
-                .expect(X_TYPEERROR);
+                .expect(X_TYPEERROR) as usize;
             let y = value
                 .get("y")
                 .expect(Y_MISSING)
                 .as_integer()
-                .expect(Y_TYPEERROR);
-            if hexes[x as usize][y as usize].is_some() {
+                .expect(Y_TYPEERROR) as usize;
+            if hexes[x][y].is_some() {
                 panic!("hex at x={}, y={} is not empty", x, y);
             }
             let hex = Hex::from_toml(value);
-            hexes[x as usize][y as usize] = Some(hex);
+            hexes[x][y] = Some(hex);
         }
         Self {
-            width: width as usize,
-            height: height as usize,
+            width,
+            height,
             hexes,
         }
     }
 
-    pub(crate) fn place_home_station(pub_com: PubComId) {}
-
-    fn home_hex(&self, pub_com: PubComId) -> &Hex {
+    pub(crate) fn place_home_station(&mut self, pub_com: PubComId) {
         for x in 0..self.width {
             for y in 0..self.height {
-                if let Some(hex) = &self.hexes[x][y] {
-                    if hex.home_to() == Some(pub_com) {
-                        return hex;
+                if let Some(hex) = &mut self.hexes[x][y] {
+                    if let Some((other, from_edge)) = hex.home() {
+                        if other == pub_com {
+                            hex.place_station(pub_com, from_edge);
+                        }
                     }
                 }
             }

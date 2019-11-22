@@ -41,8 +41,8 @@ impl ParTrack {
     }
 
     /// Returns the par values of this `ParTrack`
-    pub fn values(&self) -> Vec<u32> {
-        self.values.clone()
+    pub fn values(&self) -> &[u32] {
+        &self.values
     }
 
     fn par_to_position(&self, par: u32) -> usize {

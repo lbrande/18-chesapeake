@@ -1,9 +1,11 @@
+use crate::PubComId;
 use super::{City, Location, Stop};
 use toml::Value;
 
 static EDGES_MISSING: &str = "edges is missing";
 static EDGES_TYPEERROR: &str = "edges is not of type Array";
 static EDGE_TYPEERROR: &str = "edge is not of type Integer";
+static ACTION_FORBIDDEN: &str = "action is forbidden";
 
 #[derive(Clone, Debug)]
 ///Represents a rail
@@ -32,7 +34,28 @@ impl Rail {
         }
     }
 
-    pub(crate) fn stop(&self) -> &Option<Stop> {
-        &self.stop
+    pub(crate) fn place_station(&mut self, pub_com: PubComId) {
+        if let Some(stop) = &mut self.stop {
+            match stop {
+                Stop::City(city) => {
+                    city.place_station(pub_com);
+                },
+                Stop::Location(location) => {
+                    location.place_station(pub_com);
+                }
+            }
+        } else {
+            panic!(ACTION_FORBIDDEN);
+        }
+    }
+
+    /// Returns the edges of this `Rail`
+    pub fn edges(&self) -> &[u32] {
+        &self.edges
+    }
+
+    /// Returns the stop of this rail, if any
+    pub fn stop(&self) -> Option<&Stop> {
+        self.stop.as_ref()
     }
 }

@@ -43,7 +43,12 @@ impl Tile {
         }
     }
 
-    pub(crate) fn rails(&self) -> &[Rail] {
+    pub(crate) fn rails_mut(&mut self) -> &mut[Rail] {
+        &mut self.rails
+    }
+
+    /// Returns the rails of this `Tile`
+    pub fn rails(&self) -> &[Rail] {
         &self.rails
     }
 }

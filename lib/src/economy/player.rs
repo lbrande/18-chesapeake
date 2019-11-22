@@ -32,16 +32,16 @@ impl Player {
         }
     }
 
-    pub(crate) fn shares_mut(&mut self) -> &mut Shares {
-        &mut self.shares
-    }
-
     pub(crate) fn add_capital(&mut self, capital: u32) {
         self.capital += capital;
     }
 
     pub(crate) fn remove_capital(&mut self, capital: u32) {
         self.capital -= capital;
+    }
+
+    pub(crate) fn shares_mut(&mut self) -> &mut Shares {
+        &mut self.shares
     }
 
     /// Returns the id of this `Player`
