@@ -1,6 +1,6 @@
 use super::Hex;
-use crate::PubComId;
-use crate::INVALID_TOML;
+use crate::geography::TrackLayMap;
+use crate::{PubComId, INVALID_TOML};
 use toml::Value;
 
 static WIDTH_MISSING: &str = "width is missing";
@@ -74,5 +74,11 @@ impl Map {
             }
         }
         unreachable!()
+    }
+
+    /// Returns the `TrackLayMap` for `pub_com` of this `Map`.
+    pub fn track_lay_map(&self, pub_com: PubComId) -> TrackLayMap {
+        let map = TrackLayMap::new();
+        map
     }
 }
