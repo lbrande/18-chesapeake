@@ -218,7 +218,9 @@ impl Game {
                 current_player.remove_capital(par);
                 self.update_president(pub_com);
                 if self.ipo.count(pub_com) < 5 {
-                    self.pub_coms.insert(pub_com, PubCom::new(10 * par));
+                    self.pub_coms
+                        .insert(pub_com, PubCom::new(pub_com, 10 * par));
+                    self.map.place_home_station(pub_com);
                 }
             } else {
                 unreachable!();

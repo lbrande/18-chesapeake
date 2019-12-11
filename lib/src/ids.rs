@@ -85,6 +85,20 @@ impl PubComId {
         .iter()
         .copied()
     }
+
+    /// Returns the station count of this `PubComId`
+    pub fn station_count(&self) -> u32 {
+        match self {
+            PubComId::BAndO => 3,
+            PubComId::CAndA => 2,
+            PubComId::CAndO => 4,
+            PubComId::LV => 2,
+            PubComId::NAndW => 3,
+            PubComId::PRR => 4,
+            PubComId::PAndLE => 3,
+            PubComId::SRR => 2,
+        }
+    }
 }
 
 impl Display for PubComId {

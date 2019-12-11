@@ -1,21 +1,24 @@
-use crate::PrivComId;
-use crate::TrainId;
+use crate::{PrivComId, PubComId, TrainId};
 use std::collections::HashSet;
 
 #[derive(Clone, Debug)]
 /// Represents a public company
 pub struct PubCom {
+    id: PubComId,
     capital: u32,
-    trains: HashSet<TrainId>,
+    stations_left: u32,
+    trains: Vec<TrainId>,
     priv_coms: HashSet<PrivComId>,
     operated: bool,
 }
 
 impl PubCom {
-    pub(crate) fn new(capital: u32) -> Self {
+    pub(crate) fn new(id: PubComId, capital: u32) -> Self {
         PubCom {
+            id,
             capital,
-            trains: HashSet::new(),
+            stations_left: id.station_count(),
+            trains: Vec::new(),
             priv_coms: HashSet::new(),
             operated: false,
         }

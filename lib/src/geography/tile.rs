@@ -43,7 +43,7 @@ impl Tile {
         }
     }
 
-    pub(crate) fn rails_mut(&mut self) -> &mut[Rail] {
+    pub(crate) fn rails_mut(&mut self) -> &mut [Rail] {
         &mut self.rails
     }
 

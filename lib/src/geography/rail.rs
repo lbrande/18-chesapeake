@@ -1,5 +1,5 @@
-use crate::PubComId;
 use super::{City, Location, Stop};
+use crate::PubComId;
 use toml::Value;
 
 static EDGES_MISSING: &str = "edges is missing";
@@ -39,7 +39,7 @@ impl Rail {
             match stop {
                 Stop::City(city) => {
                     city.place_station(pub_com);
-                },
+                }
                 Stop::Location(location) => {
                     location.place_station(pub_com);
                 }

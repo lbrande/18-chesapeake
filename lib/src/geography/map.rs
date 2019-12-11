@@ -65,8 +65,8 @@ impl Map {
         for x in 0..self.width {
             for y in 0..self.height {
                 if let Some(hex) = &mut self.hexes[x][y] {
-                    if let Some((other, from_edge)) = hex.home() {
-                        if other == pub_com {
+                    if let Some((home, from_edge)) = hex.home() {
+                        if home == pub_com {
                             hex.place_station(pub_com, from_edge);
                         }
                     }
