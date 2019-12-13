@@ -18,25 +18,25 @@ impl Hex {
     pub(crate) fn from_toml(toml: &Value) -> Self {
         let terrain = toml
             .get("terrain")
-            .and_then(|t| Some(t.as_str().expect(TERRAIN_TYPEERROR)))
-            .and_then(|t| Some(t.parse::<TerrainId>().unwrap()))
+            .map(|t| t.as_str().expect(TERRAIN_TYPEERROR))
+            .map(|t| t.parse::<TerrainId>().unwrap())
             .unwrap_or_default();
         let private = toml
             .get("private")
-            .and_then(|p| Some(p.as_str().expect(PRIVATE_TYPEERROR)))
-            .and_then(|p| Some(p.parse::<PrivComId>().unwrap()));
+            .map(|p| p.as_str().expect(PRIVATE_TYPEERROR))
+            .map(|p| p.parse::<PrivComId>().unwrap());
         let tile = toml
             .get("rails")
             .and(toml.get("color"))
-            .and_then(|_| Some(Content::Tile(Tile::from_toml(&toml))));
-        let cities = toml.get("cities").and_then(|cs| {
-            Some(Content::Cities(
+            .map(|_| Content::Tile(Tile::from_toml(&toml)));
+        let cities = toml.get("cities").map(|cs| {
+            Content::Cities(
                 cs.as_array()
                     .expect(CITIES_TYPEERROR)
                     .iter()
                     .map(|c| City::from_toml(c))
                     .collect(),
-            ))
+            )
         });
         Self {
             terrain,

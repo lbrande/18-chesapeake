@@ -47,11 +47,11 @@ impl City {
             .expect(SPOTS_TYPEERROR) as usize;
         let name = toml
             .get("name")
-            .and_then(|n| Some(n.as_str().expect(NAME_TYPEERROR).to_string()));
+            .map(|n| n.as_str().expect(NAME_TYPEERROR).to_string());
         let home = toml
             .get("home")
-            .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
-            .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
+            .map(|t| t.as_str().expect(START_TYPEERROR))
+            .map(|t| t.parse::<PubComId>().unwrap());
         Self {
             value,
             stations: HashSet::new(),
@@ -107,8 +107,8 @@ impl Location {
             .expect(NAME_TYPEERROR);
         let home = toml
             .get("home")
-            .and_then(|t| Some(t.as_str().expect(START_TYPEERROR)))
-            .and_then(|t| Some(t.parse::<PubComId>().unwrap()));
+            .map(|t| t.as_str().expect(START_TYPEERROR))
+            .map(|t| t.parse::<PubComId>().unwrap());
         Self {
             values,
             station: None,

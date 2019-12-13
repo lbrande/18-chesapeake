@@ -47,8 +47,7 @@ impl StockChart {
     /// Returns the share value of `pub_com` on this `StockChart`
     pub fn value(&self, pub_com: PubComId) -> Option<u32> {
         self.tokens
-            .get(&pub_com)
-            .and_then(|&(x, y, _)| Some(self.values[x][y]))
+            .get(&pub_com).map(|&(x, y, _)| self.values[x][y])
     }
 
     fn token_count_at_position(&self, row: usize, column: usize) -> usize {

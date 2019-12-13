@@ -22,12 +22,10 @@ impl Rail {
             let edge = value.as_integer().expect(EDGE_TYPEERROR);
             edges.push(edge as u32);
         }
-        let city = toml
-            .get("city")
-            .and_then(|c| Some(Stop::City(City::from_toml(c))));
+        let city = toml.get("city").map(|c| Stop::City(City::from_toml(c)));
         let location = toml
             .get("location")
-            .and_then(|l| Some(Stop::Location(Location::from_toml(l))));
+            .map(|l| Stop::Location(Location::from_toml(l)));
         Self {
             edges,
             stop: city.or(location),

@@ -87,7 +87,7 @@ impl PubComId {
     }
 
     /// Returns the station count of this `PubComId`
-    pub fn station_count(&self) -> u32 {
+    pub fn station_count(self) -> u32 {
         match self {
             PubComId::BAndO => 3,
             PubComId::CAndA => 2,
@@ -325,7 +325,7 @@ pub enum PhaseId {
 
 impl PhaseId {
     /// Returns the operating round count of this `PhaseId`
-    pub fn operating_round_count(&self) -> u32 {
+    pub fn operating_round_count(self) -> u32 {
         match self {
             PhaseId::Phase2 => 1,
             PhaseId::Phase3 | PhaseId::Phase4 => 2,

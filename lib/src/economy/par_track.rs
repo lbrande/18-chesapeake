@@ -35,9 +35,7 @@ impl ParTrack {
 
     /// Returns the par value of `pub_com` on this `ParTrack`
     pub fn value(&self, pub_com: PubComId) -> Option<u32> {
-        self.tokens
-            .get(&pub_com)
-            .and_then(|&x| Some(self.values[x]))
+        self.tokens.get(&pub_com).map(|&x| self.values[x])
     }
 
     /// Returns the par values of this `ParTrack`
