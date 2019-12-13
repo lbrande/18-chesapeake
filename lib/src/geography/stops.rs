@@ -4,7 +4,6 @@ use toml::Value;
 
 static VALUE_MISSING: &str = "value is missing";
 static VALUE_TYPEERROR: &str = "value is not of type Integer";
-static START_TYPEERROR: &str = "start is not of type String";
 static SPOTS_MISSING: &str = "spots is missing";
 static SPOTS_TYPEERROR: &str = "spots is not of type Integer";
 static VALUES_MISSING: &str = "values is missing";
@@ -30,7 +29,6 @@ pub struct City {
     stations: HashSet<PubComId>,
     spots: usize,
     name: Option<String>,
-    home: Option<PubComId>,
 }
 
 impl City {
@@ -48,16 +46,11 @@ impl City {
         let name = toml
             .get("name")
             .map(|n| n.as_str().expect(NAME_TYPEERROR).to_string());
-        let home = toml
-            .get("home")
-            .map(|t| t.as_str().expect(START_TYPEERROR))
-            .map(|t| t.parse::<PubComId>().unwrap());
         Self {
             value,
             stations: HashSet::new(),
             spots,
             name,
-            home,
         }
     }
 
@@ -68,11 +61,6 @@ impl City {
             panic!(ACTION_FORBIDDEN);
         }
     }
-
-    /// Returns the public company that has its home in this `City`, if any
-    pub fn home(&self) -> Option<PubComId> {
-        self.home
-    }
 }
 
 /// Represents an off-board location
@@ -81,7 +69,6 @@ pub struct Location {
     values: (u32, u32, u32, u32),
     station: Option<PubComId>,
     name: String,
-    home: Option<PubComId>,
 }
 
 impl Location {
@@ -105,15 +92,10 @@ impl Location {
             .expect(NAME_MISSING)
             .as_str()
             .expect(NAME_TYPEERROR);
-        let home = toml
-            .get("home")
-            .map(|t| t.as_str().expect(START_TYPEERROR))
-            .map(|t| t.parse::<PubComId>().unwrap());
         Self {
             values,
             station: None,
             name: name.to_string(),
-            home,
         }
     }
 
@@ -123,10 +105,5 @@ impl Location {
         } else {
             panic!(ACTION_FORBIDDEN);
         }
-    }
-
-    /// Returns the public company that has its home in this `Location`, if any
-    pub fn home(&self) -> Option<PubComId> {
-        self.home
     }
 }
