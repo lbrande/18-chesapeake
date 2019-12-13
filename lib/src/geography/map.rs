@@ -27,6 +27,7 @@ pub struct Map {
     height: usize,
     hexes: Vec<Vec<Option<Hex>>>,
     homes: HashMap<PubComId, (usize, usize, Option<u32>)>,
+    stations: HashMap<PubComId, Vec<(usize, usize, Option<u32>)>>,
 }
 
 impl Map {
@@ -87,11 +88,16 @@ impl Map {
                 .map(|e| e as u32);
             homes.insert(id, (x, y, edge));
         }
+        let mut stations = HashMap::new();
+        for id in PubComId::values() {
+            stations.insert(id, Vec::new());
+        }
         Self {
             width,
             height,
             hexes,
             homes,
+            stations,
         }
     }
 
@@ -107,6 +113,11 @@ impl Map {
     /// Returns the `TrackLayMap` for `pub_com` of this `Map`.
     pub fn track_lay_map(&self, pub_com: PubComId) -> TrackLayMap {
         let map = TrackLayMap::new();
+        if let Some(stations) = self.stations.get(&pub_com) {
+            for &(x, y, edge) in stations {}
+        } else {
+            unreachable!();
+        }
         map
     }
 }
