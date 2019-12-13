@@ -14,6 +14,9 @@ impl TrackLayMap {
     }
 
     pub(crate) fn insert(&mut self, key: (usize, usize), value: (i32, u32)) {
-       self.track_lays.entry(key).and_modify(|v| v.push(value)).or_insert_with(|| vec![value]);
+        self.track_lays
+            .entry(key)
+            .and_modify(|v| v.push(value))
+            .or_insert_with(|| vec![value]);
     }
 }
