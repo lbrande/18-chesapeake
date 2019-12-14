@@ -118,7 +118,7 @@ impl Game {
     pub fn current_player(&self) -> usize {
         self.current_player
     }
-    
+
     /// Returns the president of `pub_com` in this `Game`, if any
     pub fn president(&self, pub_com: PubComId) -> Option<usize> {
         for player in &self.players {
