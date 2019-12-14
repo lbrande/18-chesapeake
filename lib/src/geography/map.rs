@@ -110,7 +110,7 @@ impl Map {
         unreachable!()
     }
 
-    /// Returns the `TrackLayMap` for `pub_com` of this `Map`.
+    /// Returns the `TrackLayMap` for `pub_com` on this `Map`.
     pub fn track_lay_map(&self, pub_com: PubComId) -> TrackLayMap {
         let map = TrackLayMap::new();
         if let Some(stations) = self.stations.get(&pub_com) {

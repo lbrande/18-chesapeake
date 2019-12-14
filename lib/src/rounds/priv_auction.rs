@@ -1,6 +1,8 @@
 use crate::economy::Player;
-use crate::PrivComId;
+use crate::{Game, PrivComId, RoundId};
 use std::collections::HashMap;
+
+static ACTION_FORBIDDEN: &str = "action is forbidden";
 
 #[derive(Debug)]
 /// Represents the auction for private companies
@@ -149,5 +151,81 @@ impl PrivAuction {
             }
         }
         player
+    }
+}
+
+impl Game {
+    /// Returns whether placing a bid of `amount` on `private` is allowed
+    pub fn bid_priv_allowed(&self, private: PrivComId, amount: u32) -> bool {
+        if let RoundId::PrivAuction(priv_auction) = &self.round {
+            if let Some(current_priv) = priv_auction.current() {
+                let current_player = &self.players[self.current_player];
+                priv_auction.can_afford_bid(&current_player, private, amount)
+                    && amount + 5 >= priv_auction.max_bid(private)
+                    && ((private == current_priv
+                        && priv_auction
+                            .bids(&current_player)
+                            .get(&private)
+                            .map_or(false, |&a| a != priv_auction.max_bid(private)))
+                        || (private != current_priv
+                            && current_priv.cost() == priv_auction.max_bid(current_priv)
+                            && !priv_auction
+                                .bids(&self.players[self.current_player])
+                                .contains_key(&private)))
+            } else {
+                false
+            }
+        } else {
+            false
+        }
+    }
+
+    /// Places a bid of `amount` on `private`
+    pub fn bid_priv(&mut self, private: PrivComId, amount: u32) {
+        if !self.bid_priv_allowed(private, amount) {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
+            self.passes = 0;
+            priv_auction.insert_bid(&self.players[self.current_player], private, amount);
+            priv_auction.reset_non_max_bids(private);
+        } else {
+            unreachable!();
+        }
+        self.advance_current_player();
+    }
+
+    /// Returns whether buying the cheapest private company is allowed
+    pub fn buy_cheapest_priv_allowed(&self) -> bool {
+        if let RoundId::PrivAuction(priv_auction) = &self.round {
+            priv_auction
+                .current_if_buy_allowed(&self.players[self.current_player])
+                .is_some()
+        } else {
+            false
+        }
+    }
+
+    /// Buys the cheapest private company
+    pub fn buy_cheapest_priv(&mut self) {
+        if !self.buy_cheapest_priv_allowed() {
+            panic!(ACTION_FORBIDDEN);
+        }
+        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
+            let current_player = &mut self.players[self.current_player];
+            if let Some(current_priv) = priv_auction.current_if_buy_allowed(&current_player) {
+                self.passes = 0;
+                priv_auction.advance_current();
+                current_player.buy_priv(current_priv, current_priv.cost());
+                self.priority_player = (self.current_player + 1) % self.players.len();
+                if priv_auction.current().is_none() {
+                    self.enter_first_stock_round();
+                    return;
+                }
+            }
+        } else {
+            unreachable!();
+        }
+        self.advance_current_player();
     }
 }

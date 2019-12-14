@@ -10,20 +10,20 @@ static ACTION_FORBIDDEN: &str = "action is forbidden";
 /// Represents a game
 #[derive(Debug)]
 pub struct Game {
-    round: RoundId,
-    phase: PhaseId,
-    players: Vec<Player>,
-    current_player: usize,
-    priority_player: usize,
-    passes: usize,
-    pub_coms: HashMap<PubComId, PubCom>,
-    map: Map,
-    tile_set: TileSet,
-    train_set: TrainSet,
-    stock_chart: StockChart,
-    par_track: ParTrack,
-    ipo: Shares,
-    pool: Shares,
+    pub(crate) round: RoundId,
+    pub(crate) phase: PhaseId,
+    pub(crate) players: Vec<Player>,
+    pub(crate) current_player: usize,
+    pub(crate) priority_player: usize,
+    pub(crate) passes: usize,
+    pub(crate) pub_coms: HashMap<PubComId, PubCom>,
+    pub(crate) map: Map,
+    pub(crate) tile_set: TileSet,
+    pub(crate) train_set: TrainSet,
+    pub(crate) stock_chart: StockChart,
+    pub(crate) par_track: ParTrack,
+    pub(crate) ipo: Shares,
+    pub(crate) pool: Shares,
 }
 
 impl Game {
@@ -52,80 +52,6 @@ impl Game {
             ipo: Shares::ipo_shares(),
             pool: Shares::empty_shares(),
         }
-    }
-
-    /// Returns whether placing a bid of `amount` on `private` is allowed
-    pub fn bid_priv_allowed(&self, private: PrivComId, amount: u32) -> bool {
-        if let RoundId::PrivAuction(priv_auction) = &self.round {
-            if let Some(current_priv) = priv_auction.current() {
-                let current_player = &self.players[self.current_player];
-                priv_auction.can_afford_bid(&current_player, private, amount)
-                    && amount + 5 >= priv_auction.max_bid(private)
-                    && ((private == current_priv
-                        && priv_auction
-                            .bids(&current_player)
-                            .get(&private)
-                            .map_or(false, |&a| a != priv_auction.max_bid(private)))
-                        || (private != current_priv
-                            && current_priv.cost() == priv_auction.max_bid(current_priv)
-                            && !priv_auction
-                                .bids(&self.players[self.current_player])
-                                .contains_key(&private)))
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
-
-    /// Places a bid of `amount` on `private`
-    pub fn bid_priv(&mut self, private: PrivComId, amount: u32) {
-        if !self.bid_priv_allowed(private, amount) {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
-            self.passes = 0;
-            priv_auction.insert_bid(&self.players[self.current_player], private, amount);
-            priv_auction.reset_non_max_bids(private);
-        } else {
-            unreachable!();
-        }
-        self.advance_current_player();
-    }
-
-    /// Returns whether buying the cheapest private company is allowed
-    pub fn buy_cheapest_priv_allowed(&self) -> bool {
-        if let RoundId::PrivAuction(priv_auction) = &self.round {
-            priv_auction
-                .current_if_buy_allowed(&self.players[self.current_player])
-                .is_some()
-        } else {
-            false
-        }
-    }
-
-    /// Buys the cheapest private company
-    pub fn buy_cheapest_priv(&mut self) {
-        if !self.buy_cheapest_priv_allowed() {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::PrivAuction(priv_auction) = &mut self.round {
-            let current_player = &mut self.players[self.current_player];
-            if let Some(current_priv) = priv_auction.current_if_buy_allowed(&current_player) {
-                self.passes = 0;
-                priv_auction.advance_current();
-                current_player.buy_priv(current_priv, current_priv.cost());
-                self.priority_player = (self.current_player + 1) % self.players.len();
-                if priv_auction.current().is_none() {
-                    self.enter_first_stock_round();
-                    return;
-                }
-            }
-        } else {
-            unreachable!();
-        }
-        self.advance_current_player();
     }
 
     /// Returns whether passing is allowed
@@ -188,191 +114,20 @@ impl Game {
         self.advance_current_player();
     }
 
-    /// Returns whether buying a share of `pub_com` from the IPO is allowed
-    pub fn buy_ipo_share_allowed(&self, pub_com: PubComId) -> bool {
-        if let RoundId::StockRound(_) = &self.round {
-            if let Some(par) = self.par_track.value(pub_com) {
-                let current_player = &self.players[self.current_player];
-                self.ipo.count(pub_com) > 0
-                    && current_player.shares().count(pub_com) < 6
-                    && self.certificate_count(current_player) < self.certificate_limit()
-                    && current_player.capital() >= par
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
-
-    /// Buys a share of `pub_com` from the IPO
-    pub fn buy_ipo_share(&mut self, pub_com: PubComId) {
-        if !self.buy_ipo_share_allowed(pub_com) {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::StockRound(_) = &self.round {
-            if let Some(par) = self.par_track.value(pub_com) {
-                let current_player = &mut self.players[self.current_player];
-                self.ipo.remove_shares(pub_com, 1);
-                current_player.shares_mut().add_shares(pub_com, 1);
-                current_player.remove_capital(par);
-                self.update_president(pub_com);
-                if self.ipo.count(pub_com) < 5 {
-                    self.pub_coms
-                        .insert(pub_com, PubCom::new(pub_com, 10 * par));
-                    self.map.place_home_station(pub_com);
-                }
-            } else {
-                unreachable!();
-            }
-        } else {
-            unreachable!();
-        }
-        self.end_turn();
-    }
-
-    /// Returns whether buying a share of `pub_com` from the bank pool is allowed
-    pub fn buy_pool_share_allowed(&self, pub_com: PubComId) -> bool {
-        if let RoundId::StockRound(_) = &self.round {
-            if let Some(value) = self.stock_chart.value(pub_com) {
-                let current_player = &self.players[self.current_player];
-                self.pool.count(pub_com) > 0
-                    && current_player.shares().count(pub_com) < 6
-                    && self.certificate_count(current_player) < self.certificate_limit()
-                    && current_player.capital() >= value
-            } else {
-                false
-            }
-        } else {
-            false
-        }
-    }
-
-    /// Buys a share of `pub_com` from the bank pool
-    pub fn buy_pool_share(&mut self, pub_com: PubComId) {
-        if !self.buy_pool_share_allowed(pub_com) {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::StockRound(_) = &self.round {
-            if let Some(value) = self.stock_chart.value(pub_com) {
-                let current_player = &mut self.players[self.current_player];
-                self.pool.remove_shares(pub_com, 1);
-                current_player.shares_mut().add_shares(pub_com, 1);
-                current_player.remove_capital(value);
-                self.update_president(pub_com);
-            } else {
-                unreachable!();
-            }
-        } else {
-            unreachable!();
-        }
-        self.end_turn();
-    }
-
-    /// Returns whether buying the precidency of `pub_com`, setting the par value to `par` is allowed
-    pub fn buy_presidency_allowed(&self, pub_com: PubComId, par: u32) -> bool {
-        if let RoundId::StockRound(_) = &self.round {
-            let current_player = &self.players[self.current_player];
-            self.par_track.values().contains(&par)
-                && self.ipo.contains_presidency(pub_com)
-                && self.certificate_count(current_player) < self.certificate_limit()
-                && current_player.capital() >= par * 2
-        } else {
-            false
-        }
-    }
-
-    /// Buys the precidency of `pub_com`, setting the par value to `par`
-    pub fn buy_presidency(&mut self, pub_com: PubComId, par: u32) {
-        if !self.buy_presidency_allowed(pub_com, par) {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::StockRound(_) = &self.round {
-            let current_player = &mut self.players[self.current_player];
-            self.pool.remove_shares(pub_com, 2);
-            self.pool.remove_presidency(pub_com);
-            current_player.shares_mut().add_shares(pub_com, 2);
-            current_player.shares_mut().add_presidency(pub_com);
-            current_player.remove_capital(par * 2);
-            self.par_track.add_token(pub_com, par);
-            self.stock_chart.add_token(pub_com, par);
-        } else {
-            unreachable!();
-        }
-        self.end_turn();
-    }
-
-    /// Returns whether ending the turn is allowed
-    pub fn end_turn_allowed(&self) -> bool {
-        if let RoundId::StockRound(stock_round) = &self.round {
-            stock_round.action_performed()
-                && self.certificate_count(&self.players[self.current_player])
-                    <= self.certificate_limit()
-        } else {
-            false
-        }
-    }
-
-    /// Ends the turn
-    pub fn end_turn(&mut self) {
-        if !self.end_turn_allowed() {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::StockRound(stock_round) = &mut self.round {
-            stock_round.unset_action_performed();
-            self.passes = 0;
-        } else {
-            unreachable!();
-        }
-        self.advance_current_player();
-    }
-
-    /// Returns whether selling `count` shares of `pub_com` is allowed
-    pub fn sell_shares_allowed(&self, pub_com: PubComId, count: u32) -> bool {
-        if let RoundId::StockRound(stock_round) = &self.round {
-            let current_player = &self.players[self.current_player];
-            let owned_count = current_player.shares().count(pub_com);
-            let president = current_player.shares().contains_presidency(pub_com);
-            (!president
-                || owned_count - count >= 2
-                || self
-                    .players
-                    .iter()
-                    .any(|p| p.id() != current_player.id() && p.shares().count(pub_com) >= 2))
-                && count + self.pool.count(pub_com) <= 5
-                && owned_count >= count
-                && self.stock_chart.value(pub_com).is_some()
-                && stock_round.sell_allowed()
-        } else {
-            false
-        }
-    }
-
-    /// Sells `count` shares of `pub_com`
-    pub fn sell_shares(&mut self, pub_com: PubComId, count: u32) {
-        if !self.sell_shares_allowed(pub_com, count) {
-            panic!(ACTION_FORBIDDEN);
-        }
-        if let RoundId::StockRound(stock_round) = &mut self.round {
-            let current_player = &mut self.players[self.current_player];
-            stock_round.set_action_performed();
-            stock_round.insert_pub_com_sold(pub_com, current_player);
-            current_player.shares_mut().remove_shares(pub_com, count);
-            self.pool.add_shares(pub_com, count);
-            current_player.add_capital(self.stock_chart.value(pub_com).unwrap() * count);
-            self.stock_chart.move_down(pub_com, count as usize);
-            self.update_president(pub_com);
-        } else {
-            unreachable!();
-        }
-        self.advance_current_player();
-    }
-
-    /// Returns the current player of this game
+    /// Returns the current player of this `Game`
     pub fn current_player(&self) -> usize {
         self.current_player
     }
-
+    
+    /// Returns the president of `pub_com` in this `Game`, if any
+    pub fn president(&self, pub_com: PubComId) -> Option<usize> {
+        for player in &self.players {
+            if player.shares().contains_presidency(pub_com) {
+                return Some(player.id());
+            }
+        }
+        None
+    }
     /// Returns the certificate limit of this `Game`
     pub fn certificate_limit(&self) -> u32 {
         match self.players.len() {
@@ -385,43 +140,24 @@ impl Game {
         }
     }
 
-    fn enter_first_stock_round(&mut self) {
-        self.round = RoundId::StockRound(StockRound::new(false));
-        self.current_player = self.priority_player;
+    /// Returns the certificate count of `player` in this `Game`
+    pub fn certificate_count(&self, player: &Player) -> u32 {
+        PubComId::values()
+            .map(|p| {
+                if let Some(value) = self.stock_chart.value(p) {
+                    if value < 60 {
+                        0
+                    } else {
+                        player.shares().count(p)
+                    }
+                } else {
+                    player.shares().count(p)
+                }
+            })
+            .sum()
     }
 
-    fn enter_first_operating_round(&mut self) {
-        self.round = RoundId::OperatingRound(OperatingRound::new(
-            self.phase.operating_round_count() - 1,
-            PubComId::values()
-                .filter(|&p| self.stock_chart.value(p).is_some())
-                .collect(),
-        ));
-        self.operate_priv_coms();
-        self.current_player = self.president(self.current_pub_com()).unwrap();
-    }
-
-    fn operate_priv_coms(&mut self) {
-        for player in &mut self.players {
-            player.operate_priv_coms();
-        }
-    }
-
-    fn current_pub_com(&self) -> PubComId {
-        if let RoundId::OperatingRound(operating_round) = &self.round {
-            operating_round
-                .pub_coms_to_operate()
-                .iter()
-                .map(|&p| (p, self.stock_chart.value(p).unwrap()))
-                .max_by(|(_, v_1), (_, v_2)| u32::cmp(v_1, v_2))
-                .unwrap()
-                .0
-        } else {
-            panic!(ACTION_FORBIDDEN);
-        }
-    }
-
-    fn advance_current_player(&mut self) {
+    pub(crate) fn advance_current_player(&mut self) {
         match &mut self.round {
             RoundId::StockRound(_) => {
                 self.current_player = (self.current_player + 1) % self.players.len();
@@ -437,7 +173,29 @@ impl Game {
         }
     }
 
-    fn update_president(&mut self, pub_com: PubComId) {
+    pub(crate) fn enter_first_stock_round(&mut self) {
+        self.round = RoundId::StockRound(StockRound::new(false));
+        self.current_player = self.priority_player;
+    }
+
+    pub(crate) fn enter_first_operating_round(&mut self) {
+        self.round = RoundId::OperatingRound(OperatingRound::new(
+            self.phase.operating_round_count() - 1,
+            PubComId::values()
+                .filter(|&p| self.stock_chart.value(p).is_some())
+                .collect(),
+        ));
+        self.operate_priv_coms();
+        self.current_player = self.president(self.current_pub_com()).unwrap();
+    }
+
+    pub(crate) fn operate_priv_coms(&mut self) {
+        for player in &mut self.players {
+            player.operate_priv_coms();
+        }
+    }
+
+    pub(crate) fn update_president(&mut self, pub_com: PubComId) {
         if let Some(president) = self.president(pub_com) {
             let mut new_president = president;
             let mut max_shares = self.players[president].shares().count(pub_com);
@@ -460,29 +218,18 @@ impl Game {
         }
     }
 
-    fn president(&self, pub_com: PubComId) -> Option<usize> {
-        for player in &self.players {
-            if player.shares().contains_presidency(pub_com) {
-                return Some(player.id());
-            }
+    fn current_pub_com(&self) -> PubComId {
+        if let RoundId::OperatingRound(operating_round) = &self.round {
+            operating_round
+                .pub_coms_to_operate()
+                .iter()
+                .map(|&p| (p, self.stock_chart.value(p).unwrap()))
+                .max_by(|(_, v_1), (_, v_2)| u32::cmp(v_1, v_2))
+                .unwrap()
+                .0
+        } else {
+            panic!(ACTION_FORBIDDEN);
         }
-        None
-    }
-
-    fn certificate_count(&self, player: &Player) -> u32 {
-        PubComId::values()
-            .map(|p| {
-                if let Some(value) = self.stock_chart.value(p) {
-                    if value < 60 {
-                        0
-                    } else {
-                        player.shares().count(p)
-                    }
-                } else {
-                    player.shares().count(p)
-                }
-            })
-            .sum()
     }
 }
 
